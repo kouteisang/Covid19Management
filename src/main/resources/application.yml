@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/covidmanagement
+    username: root
+    password: HChc0827
+    driver-class-name: com.mysql.jdbc.Driver
+  jdbc:
+    template:
+      query-timeout: 3
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.covidmanage.pojo
