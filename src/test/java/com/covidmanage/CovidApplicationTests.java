@@ -1,7 +1,8 @@
 package com.covidmanage;
 
+import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
-import com.covidmanage.service.CommunityService;
+import com.covidmanage.service.CommunityUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,11 @@ class CovidApplicationTests {
     @Autowired
     private DataSource dataSource;
     @Autowired
-    private CommunityService communityService;
+    private CommunityUserService communityUserService;
+    @Autowired
+    private CommunityUserMapperExt communityUserMapperExt;
+
+
     @Test
     void contextLoads() {
        // jdbcTemplate.queryForObject("select * from community_user");
@@ -31,12 +36,29 @@ class CovidApplicationTests {
     }
     @Test
     void findUserTest(){
-        log.info("communityService{}", communityService);
-        List<CommunityUser> list = communityService.findUser(1, 10, "黄程", "17852738980", "372929199801166317");
+        log.info("communityService{}", communityUserService);
+        List<CommunityUser> list = communityUserService.findUser(1, 10, "黄程", "178527389", "99801166317");
         log.info("list:{}", list.size());
         for(CommunityUser cu : list){
             System.out.println(cu.toString());
         }
+    }
+
+    @Test
+    void addUser(){
+        communityUserService.addUser("372929197208016351","黄先亮","13475910553","山东省-济南市-历城区-万科幸福里二期8号楼1单元102","黄程","13276445572");
+    }
+
+    @Test
+    void deleteUser(){
+        communityUserService.deleteUserByIdentityId("372929197208016351");
+        log.info("删除成功");
+    }
+
+    @Test
+    void finduserByCondition(){
+        CommunityUser communityUser = communityUserMapperExt.selectByIndentityId("372929199801166317");
+        log.info("ans = {}", communityUser.getRealName());
     }
 
 }

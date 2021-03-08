@@ -1,7 +1,10 @@
 package com.covidmanage.pojo;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 
+@Builder
 public class CommunityManager implements Serializable {
     /**
      *

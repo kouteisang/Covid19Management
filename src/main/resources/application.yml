@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/covidmanagement
+    url: jdbc:mysql://localhost:3306/covidmanagement?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: HChc0827
     driver-class-name: com.mysql.jdbc.Driver
@@ -10,5 +10,9 @@ spring:
 
 mybatis:
   config-location: classpath:mybatis-config.xml
-  mapper-locations: classpath:mapper/*Mapper.xml
+  mapper-locations: classpath:mapper/*Mapper.xml,classpath:mapper/ext/*.xml
   type-aliases-package: com.covidmanage.pojo
+
+server:
+  port: 8081
+
