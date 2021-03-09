@@ -14,5 +14,5 @@ mybatis:
   type-aliases-package: com.covidmanage.pojo
 
 server:
-  port: 8081
+  port: 8181
 

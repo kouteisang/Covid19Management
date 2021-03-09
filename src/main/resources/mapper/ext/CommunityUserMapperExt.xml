@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.covidmanage.mapper.ext.CommunityUserMapperExt">
+  <resultMap id="BaseResultMap" type="com.covidmanage.pojo.CommunityUser">
+
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="emergency_name" jdbcType="VARCHAR" property="emergencyName" />
+    <result column="emergency_phone" jdbcType="VARCHAR" property="emergencyPhone" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+
+  <insert id="addUser" parameterType="com.covidmanage.pojo.CommunityUser">
+    insert into community_user(identity_id, `name`, phone, `location`, emergency_name, emergency_phone)
+    values(#{communityUser.identityId}, #{communityUser.name}, #{communityUser.phone}, #{communityUser.location}, #{communityUser.emergencyName}, #{communityUser.emergencyPhone})
+  </insert>
+
+  <select id="selectByIndentityId" resultType="com.covidmanage.pojo.CommunityUser">
+    select *
+    from community_user
+    where identity_id = #{identityId}
+  </select>
+
+  <select id="findUser" resultType="com.covidmanage.pojo.CommunityUser">
+    select *
+    from community_user
+    where
+    1 = 1
+      <if test="realName != null">
+        and real_name like CONCAT('%',#{realName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="phone != null">
+        and  phone like CONCAT('%',#{phone,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="identityId != null">
+        and identity_id like CONCAT('%',#{identityId,jdbcType=VARCHAR},'%')
+      </if>
+  </select>
+
+</mapper>
