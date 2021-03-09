@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://192.168.1.166:8081", maxAge = 3600)
 @RestController
 @RequestMapping("/user")
 public class CommunityUserController {
