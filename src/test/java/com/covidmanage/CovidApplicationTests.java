@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @SpringBootTest
@@ -37,16 +38,14 @@ class CovidApplicationTests {
     @Test
     void findUserTest(){
         log.info("communityService{}", communityUserService);
-        List<CommunityUser> list = communityUserService.findUser(1, 10, "黄程", "178527389", "99801166317");
+        Map<Object, Object> list = communityUserService.findUser(1, 10, "", "", "");
         log.info("list:{}", list.size());
-        for(CommunityUser cu : list){
-            System.out.println(cu.toString());
-        }
     }
 
     @Test
     void addUser(){
-        communityUserService.addUser("372929197208016351","黄先亮","13475910553","山东省-济南市-历城区-万科幸福里二期8号楼1单元102","黄程","13276445572");
+        communityUserService.addUser("30","黄先亮0403","13475910553","山东省","济南市",
+                "历城区","万科幸福里二期8号楼1单元102","黄程","13276445572");
     }
 
     @Test
@@ -61,4 +60,15 @@ class CovidApplicationTests {
         log.info("ans = {}", communityUser.getRealName());
     }
 
+    @Test
+    void findUserByIdentiryId(){
+        CommunityUser communityUser = communityUserService.findUserByIndentityId("372929199801166317");
+        System.out.println(communityUser.toString());
+    }
+
+    @Test
+    void editInfoByIdentityId(){
+        communityUserService.editInfoByIdentityId("6","huangXL","1",
+                "1","1","1","1","1","1");
+    }
 }

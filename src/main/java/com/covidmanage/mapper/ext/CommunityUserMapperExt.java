@@ -18,4 +18,6 @@ public interface CommunityUserMapperExt extends CommunityUserMapper {
                                  @Param("identityId") String identityId);
 
     CommunityUser selectByIndentityId(@Param("identityId") String identityId);
+
+    void editInfoByIdentityId(@Param("communityUser") CommunityUser communityUser);
 }

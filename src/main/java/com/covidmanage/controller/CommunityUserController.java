@@ -5,12 +5,15 @@ import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@CrossOrigin(origins = "http://192.168.1.166:8081", maxAge = 3600)
+@Slf4j
+@CrossOrigin(origins = "http://10.151.60.110:8080", maxAge = 3600)
 @RestController
 @RequestMapping("/user")
 public class CommunityUserController {
@@ -34,7 +37,7 @@ public class CommunityUserController {
                                      @RequestParam(value = "phone") String phone,
                                      @RequestParam(value = "identityId") String identityId){
         PageHelper.startPage(page, size);
-        List<CommunityUser> commuintUser = communityUserService.findUser(page, size, name, phone, identityId);
+        Map<Object, Object> commuintUser = communityUserService.findUser(page, size, name, phone, identityId);
         return ResponseTemplate.success(commuintUser);
     }
 
@@ -57,10 +60,16 @@ public class CommunityUserController {
                                     @RequestParam(value = "district") String district,
                                     @RequestParam(value = "community") String community,
                                     @RequestParam(value = "emergencyName") String emergencyName,
-                                    @RequestParam(value = "energencyPhone") String energencyPhone
+                                    @RequestParam(value = "emergencyPhone") String emergencyPhone
                                     ){
-        String location = province + "-" + city + "-" + district + "-" + community;
-        communityUserService.addUser(identityId, name, phone, location, emergencyName, energencyPhone);
+        log.info("identityId = {}", identityId);
+        log.info("name = {}", name);
+        log.info("phone = {}", phone);
+        log.info("province = {}", province);
+        log.info("city = {}", city);
+        log.info("district = {}", district);
+        log.info("community = {}", community);
+        communityUserService.addUser(identityId, name, phone, province, city, district, community, emergencyName, emergencyPhone);
         return ResponseTemplate.success(ResponseCode.SUCCESS.val());
     }
 
@@ -77,5 +86,44 @@ public class CommunityUserController {
         else return ResponseTemplate.fail(ResponseCode.ERROR.val(), null);
     }
 
+    /**
+     * 根据身份证号查找用户信息
+     * @param identityId
+     * @return
+     */
+    @GetMapping("/findUserByIndentityId")
+    public ResponseTemplate findUserByIndentityId(@RequestParam(value = "identityId") String identityId){
+        CommunityUser communityUserInfo = communityUserService.findUserByIndentityId(identityId);
+        return ResponseTemplate.success(communityUserInfo);
+
+    }
+
+
+    /**
+     * 根据身份证号修改小区住户信息
+     * @param identityId
+     * @param realName
+     * @param phone
+     * @param province
+     * @param city
+     * @param district
+     * @param community
+     * @param emergencyName
+     * @param emergencyPhone
+     * @return
+     */
+    @PostMapping("/editInfoByIdentityId")
+    public ResponseTemplate editInfoByIdentityId(@RequestParam(value = "identityId") String identityId,
+                                                  @RequestParam(value = "realName") String realName,
+                                                  @RequestParam(value = "phone") String phone,
+                                                  @RequestParam(value = "province") String province,
+                                                  @RequestParam(value = "city") String city,
+                                                  @RequestParam(value = "district") String district,
+                                                  @RequestParam(value = "community") String community,
+                                                  @RequestParam(value = "emergencyName") String emergencyName,
+                                                  @RequestParam(value = "emergencyPhone") String emergencyPhone){
+        communityUserService.editInfoByIdentityId(identityId, realName, phone, province, city, district, community,emergencyName, emergencyPhone);
+        return ResponseTemplate.success("更新成功");
+    }
 
 }
