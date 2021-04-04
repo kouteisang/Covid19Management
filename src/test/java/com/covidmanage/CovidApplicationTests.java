@@ -1,5 +1,6 @@
 package com.covidmanage;
 
+import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommunityUserService;
@@ -25,6 +26,8 @@ class CovidApplicationTests {
     private CommunityUserService communityUserService;
     @Autowired
     private CommunityUserMapperExt communityUserMapperExt;
+    @Autowired
+    private CityInfoMapperExt cityInfoMapperExt;
 
 
     @Test
@@ -71,5 +74,13 @@ class CovidApplicationTests {
     void editInfoByIdentityId(){
         communityUserService.editInfoByIdentityId("6","huangXL","1",
                 "1","1","1","1","1","1");
+    }
+
+    @Test
+    void getAllProvince(){
+        List<String> provinces = cityInfoMapperExt.getAllProvince();
+        for(String province : provinces){
+            System.out.println(province);
+        }
     }
 }
