@@ -38,8 +38,9 @@ class CovidApplicationTests {
     @Test
     void findUserTest(){
         log.info("communityService{}", communityUserService);
-        Map<Object, Object> list = communityUserService.findUser(1, 10, "", "", "");
+        Map<Object, Object> list = communityUserService.findUser(1, 10, "黄", "17852738980", "");
         log.info("list:{}", list.size());
+
     }
 
     @Test

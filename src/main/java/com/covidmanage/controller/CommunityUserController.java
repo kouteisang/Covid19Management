@@ -33,9 +33,9 @@ public class CommunityUserController {
     @GetMapping("/findUser")
     public ResponseTemplate findUser(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                      @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-                                     @RequestParam(value = "name") String name,
-                                     @RequestParam(value = "phone") String phone,
-                                     @RequestParam(value = "identityId") String identityId){
+                                     @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                     @RequestParam(value = "phone", required = false, defaultValue = "") String phone,
+                                     @RequestParam(value = "identityId", required = false, defaultValue = "") String identityId){
         PageHelper.startPage(page, size);
         Map<Object, Object> commuintUser = communityUserService.findUser(page, size, name, phone, identityId);
         return ResponseTemplate.success(commuintUser);
