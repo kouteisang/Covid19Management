@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.covidmanage.mapper.ext.SickUserMapperExt">
+
+    <resultMap id="SickUserInfoMap" type="com.covidmanage.dto.SickUserInfo">
+        <result column="real_name" jdbcType="VARCHAR" property="realName" />
+        <result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+        <result column="sick_reason" jdbcType="VARCHAR" property="sickReason" />
+        <result column="when_sick" jdbcType="VARCHAR" property="whenSick" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="if_favour" jdbcType="VARCHAR" property="ifFavour" />
+        <result column="body_temperature" jdbcType="VARCHAR" property="bodyTemperature" />
+        <result column="covid_test" jdbcType="TIMESTAMP" property="covidTest" />
+        <result column="community" jdbcType="VARCHAR" property="community"/>
+    </resultMap>
+
+
+    <select id="getSickUserList"  parameterType="java.lang.String" resultMap="SickUserInfoMap">
+            select cu.identity_id, cu.real_name, cu.phone, su.sick_reason, su.when_sick, su.if_favour, su.body_temperature, su.covid_test, cu.community
+            from sick_user su
+            inner join community_user cu
+            on  su.identity_id = cu.identity_id
+            where
+            1 = 1
+            <if test="realName != null">
+                and cu.real_name like CONCAT('%',#{realName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="phone != null">
+                and  cu.phone like CONCAT('%',#{phone,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="identityId != null">
+                and cu.identity_id like CONCAT('%',#{identityId,jdbcType=VARCHAR},'%')
+            </if>
+    </select>
+</mapper>

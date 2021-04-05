@@ -1,0 +1,67 @@
+package com.covidmanage.controller;
+
+
+import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.service.SickUserService;
+import com.covidmanage.utils.ResponseCode;
+import com.covidmanage.utils.ResponseTemplate;
+import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.Map;
+
+@Slf4j
+@CrossOrigin(origins = "http://10.151.60.110:8080", maxAge = 3600)
+@RestController
+@RequestMapping("/manager/sick")
+public class SickUserController {
+
+    @Autowired
+    private CommunityUserService communityUserService;
+    @Autowired
+    private SickUserService sickUserService;
+
+
+    /**
+     * 添加生病人员信息
+     * @param identityId
+     * @param sickReason
+     * @param whenSick
+     * @param ifFavour
+     * @param bodyTemperature
+     * @return
+     */
+    @PostMapping("/addSickUser")
+    public ResponseTemplate addSickUser(@RequestParam(value = "identityId") String identityId,
+                                        @RequestParam(value = "sickReason") String sickReason,
+                                        @RequestParam(value = "whenSick") String whenSick,
+                                        @RequestParam(value = "ifFavour") String ifFavour,
+                                        @RequestParam(value = "bodyTemperature") Double bodyTemperature,
+                                        @RequestParam(value = "covidTest") String covidTest){
+        log.info("whenSick = {}", whenSick);
+        CommunityUser communityUser = communityUserService.findUserByIndentityId(identityId);
+        if(communityUser == null) return ResponseTemplate.fail(ResponseCode.NO_THIS_PERSON.val(),ResponseCode.NO_THIS_PERSON.msg());
+        boolean flag = sickUserService.addSickUser(identityId, sickReason, whenSick, ifFavour, bodyTemperature, covidTest);
+        if(flag) return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+        else return ResponseTemplate.success(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
+    }
+
+
+    @GetMapping("/getSickUserList")
+    public ResponseTemplate getSickUserList(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+                                            @RequestParam(value = "realName", required = false) String realName,
+                                            @RequestParam(value = "identityId", required = false) String identityId,
+                                            @RequestParam(value = "phone", required = false) String phone){
+        PageHelper.startPage(page, size);
+        Map<Object, Object> sickUserList = sickUserService.getSickUserList(page, size, realName, identityId, phone);
+        return ResponseTemplate.success(sickUserList);
+
+    }
+
+}

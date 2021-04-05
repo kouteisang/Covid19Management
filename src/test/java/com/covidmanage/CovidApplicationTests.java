@@ -1,9 +1,11 @@
 package com.covidmanage;
 
+import com.covidmanage.controller.SickUserController;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ class CovidApplicationTests {
     private CommunityUserMapperExt communityUserMapperExt;
     @Autowired
     private CityInfoMapperExt cityInfoMapperExt;
+    @Autowired
+    private SickUserController sickUserController;
 
 
     @Test
@@ -82,5 +86,25 @@ class CovidApplicationTests {
         for(String province : provinces){
             System.out.println(province);
         }
+    }
+
+    @Test
+    void getAllCities(){
+        List<String> provinces = cityInfoMapperExt.getAllDistricts("济南市");
+        for(String province : provinces){
+            System.out.println(province);
+        }
+    }
+
+    @Test
+    void addSickUser(){
+        sickUserController.addSickUser("2","感冒","2017-01-01","否",36.5, "是");
+    }
+
+    @Test
+    void getUserList(){
+        ResponseTemplate sickUserList = sickUserController.getSickUserList(1, 10, "", "", "");
+        Object data = sickUserList.getData();
+        System.out.println(data);
     }
 }

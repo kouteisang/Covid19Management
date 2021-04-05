@@ -5,7 +5,10 @@ public enum ResponseCode {
     SUCCESS("200", "成功"),
 
     /** 操作失败 */
-    ERROR("500", "操作失败");
+    ERROR("500", "操作失败"),
+
+    /** 小区内无此用户 */
+    NO_THIS_PERSON("404","小区内无此住户，请先添加此用户！");
 
     private ResponseCode(String value, String msg){
         this.val = value;

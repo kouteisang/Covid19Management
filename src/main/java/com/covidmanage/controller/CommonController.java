@@ -4,11 +4,10 @@ import com.covidmanage.service.CommonService;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,10 @@ public class CommonController {
     @Autowired
     private CommonService commonService;
 
+    /**
+     * 得到所有省份
+     * @return
+     */
     @GetMapping("/getAllProvince")
     public ResponseTemplate getAllProvince(){
         List<String> provinces = commonService.getAllProvince();
@@ -29,4 +32,34 @@ public class CommonController {
         map.put("provinces",provinces);
         return ResponseTemplate.success(map);
     }
+
+    /**
+     * 得到所有城市
+     * @param province
+     * @return
+     */
+    @GetMapping("/getAllCities")
+    public ResponseTemplate getAllCities(@RequestParam(value = "province", required = false, defaultValue = "") String province) throws UnsupportedEncodingException {
+        province = URLDecoder.decode(province,"utf-8");
+        log.info("province = {}", province);
+        List<String> cities = commonService.getAllCities(province);
+        Map<String, Object> map = new HashMap<>();
+        map.put("cities",cities);
+        return ResponseTemplate.success(map);
+    }
+
+    /**
+     * 得到所有区域
+     * @param city
+     * @return
+     */
+    @GetMapping("/getAllDistricts")
+    public ResponseTemplate getAllDistricts(@RequestParam(value = "city", required = false, defaultValue = "") String city){
+        List<String> districts = commonService.getAllDistricts(city);
+        Map<String, Object> map = new HashMap<>();
+        map.put("districts", districts);
+        return ResponseTemplate.success(map);
+    }
+
+
 }

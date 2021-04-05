@@ -43,7 +43,7 @@ public class CommunityUserController {
 
     /**
      * 添加小区用户
-     * @param name
+     * @param realName
      * @param phone
      * @param province
      * @param city
@@ -53,7 +53,7 @@ public class CommunityUserController {
      */
     @PostMapping("/addUser")
     public ResponseTemplate addUser(@RequestParam(value = "identityId") String identityId,
-                                    @RequestParam(value = "name") String name,
+                                    @RequestParam(value = "realName") String realName,
                                     @RequestParam(value = "phone") String phone,
                                     @RequestParam(value = "province") String province,
                                     @RequestParam(value = "city") String city,
@@ -63,13 +63,13 @@ public class CommunityUserController {
                                     @RequestParam(value = "emergencyPhone") String emergencyPhone
                                     ){
         log.info("identityId = {}", identityId);
-        log.info("name = {}", name);
+        log.info("realName = {}", realName);
         log.info("phone = {}", phone);
         log.info("province = {}", province);
         log.info("city = {}", city);
         log.info("district = {}", district);
         log.info("community = {}", community);
-        communityUserService.addUser(identityId, name, phone, province, city, district, community, emergencyName, emergencyPhone);
+        communityUserService.addUser(identityId, realName, phone, province, city, district, community, emergencyName, emergencyPhone);
         return ResponseTemplate.success(ResponseCode.SUCCESS.val());
     }
 
