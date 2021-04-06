@@ -14,6 +14,23 @@
         <result column="community" jdbcType="VARCHAR" property="community"/>
     </resultMap>
 
+    <select id="getSickUserInfoByIdentityId" parameterType="java.lang.String" resultMap="SickUserInfoMap">
+        select cu.identity_id, cu.real_name, cu.phone, su.sick_reason, su.when_sick, su.if_favour, su.body_temperature, su.covid_test, cu.community
+        from sick_user su
+        inner join community_user cu
+        on  su.identity_id = cu.identity_id
+        where cu.identity_id = #{identityId}
+    </select>
+
+    <update id="editSickUserInfoidentityId">
+        update sick_user
+        set sick_reason = #{sickReason}, if_favour = #{ifFavour}, body_temperature = #{bodyTemperature}, covid_test = #{covidTest}
+        where identity_id = #{identityId}
+    </update>
+
+    <select id="selectSickUserByIdentityId" parameterType="java.lang.String" resultMap="SickUserInfoMap">
+        select * from sick_user where identity_id = #{identityId}
+    </select>
 
     <select id="getSickUserList"  parameterType="java.lang.String" resultMap="SickUserInfoMap">
             select cu.identity_id, cu.real_name, cu.phone, su.sick_reason, su.when_sick, su.if_favour, su.body_temperature, su.covid_test, cu.community

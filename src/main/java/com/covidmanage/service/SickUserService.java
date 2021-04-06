@@ -71,4 +71,36 @@ public class SickUserService {
         map.put("totalPage", totalpage);
         return map;
     }
+
+    /**
+     * 根据身份证号删除生病人员信息
+     * @param identityId
+     * @return
+     */
+    public boolean deleteSickUserByIdentityId(String identityId){
+        SickUserInfo sickUser = sickUserMapperExt.selectSickUserByIdentityId(identityId);
+        if(sickUser == null) return false;
+        SickUserExample sickUserExample = new SickUserExample();
+        sickUserExample.createCriteria().andIdentityIdEqualTo(identityId);
+        sickUserMapperExt.deleteByExample(sickUserExample);
+        return true;
+    }
+
+
+    /**
+     * 根据身份证号修改生病人员病况
+     * @param identityId
+     * @param sickReason
+     * @param ifFavour
+     * @param bodyTemperature
+     * @param covidTest
+     */
+    public void editSickUserInfoidentityId(String identityId, String sickReason, String ifFavour, Double bodyTemperature, String covidTest) {
+        sickUserMapperExt.editSickUserInfoidentityId(identityId, sickReason, ifFavour, bodyTemperature, covidTest);
+    }
+
+    public SickUserInfo getSickUserInfoByIdentityId(String identityId) {
+        SickUserInfo sickUserInfo = sickUserMapperExt.getSickUserInfoByIdentityId(identityId);
+        return sickUserInfo;
+    }
 }

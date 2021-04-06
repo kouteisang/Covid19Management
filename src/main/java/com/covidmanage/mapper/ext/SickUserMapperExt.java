@@ -11,4 +11,12 @@ import java.util.List;
 @Mapper
 public interface SickUserMapperExt extends SickUserMapper {
     List<SickUserInfo> getSickUserList(@Param("realName")String realName, @Param("identityId") String identityId, @Param("phone") String phone);
+
+    SickUserInfo selectSickUserByIdentityId(@Param("identityId") String identityId);
+
+    void editSickUserInfoidentityId(@Param("identityId") String identityId, @Param("sickReason") String sickReason,
+                               @Param("ifFavour") String ifFavour, @Param("bodyTemperature") Double bodyTemperature,
+                               @Param("covidTest") String covidTest);
+
+     SickUserInfo getSickUserInfoByIdentityId(@Param("identityId") String identityId);
 }

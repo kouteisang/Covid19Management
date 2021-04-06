@@ -1,6 +1,7 @@
 package com.covidmanage;
 
 import com.covidmanage.controller.SickUserController;
+import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
@@ -106,5 +107,23 @@ class CovidApplicationTests {
         ResponseTemplate sickUserList = sickUserController.getSickUserList(1, 10, "", "", "");
         Object data = sickUserList.getData();
         System.out.println(data);
+    }
+
+    @Test
+    void deleteSickUserByIdentityId(){
+        ResponseTemplate rt = sickUserController.deleteSickUserByIdentityId("372929199801166317");
+        System.out.println(rt.toString());
+    }
+
+    @Test
+    void editSickUserInfoidentityId(){
+        ResponseTemplate responseTemplate = sickUserController.editSickUserInfo("372929199801166317", "想睡觉", "否", "阴性", 36.6);
+        System.out.println(responseTemplate.toString());
+    }
+
+    @Test
+    void getSickUserInfoByIdentityId(){
+        ResponseTemplate info = sickUserController.getSickUserInfoByIdentityId("372929199801166317");
+        System.out.println(info.toString());
     }
 }

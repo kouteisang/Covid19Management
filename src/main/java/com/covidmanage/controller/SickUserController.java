@@ -1,6 +1,7 @@
 package com.covidmanage.controller;
 
 
+import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.service.SickUserService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -51,7 +53,15 @@ public class SickUserController {
         else return ResponseTemplate.success(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
     }
 
-
+    /**
+     * 得到生病人员列表
+     * @param page
+     * @param size
+     * @param realName
+     * @param identityId
+     * @param phone
+     * @return
+     */
     @GetMapping("/getSickUserList")
     public ResponseTemplate getSickUserList(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
@@ -64,4 +74,36 @@ public class SickUserController {
 
     }
 
+    /**
+     * 通过身份证id删除生病人员信息/人员康复
+     * @param identityId
+     * @return
+     */
+    @PostMapping("/deleteSickUserByIdentityId")
+    public ResponseTemplate deleteSickUserByIdentityId(@RequestParam(value = "identityId") String identityId){
+        boolean deleteSuccess = sickUserService.deleteSickUserByIdentityId(identityId);
+        if(deleteSuccess)
+            return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+        else return ResponseTemplate.success(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
+    }
+
+    @PostMapping("/editSickUserInfoByidentityId")
+    public ResponseTemplate editSickUserInfo(@RequestParam(value = "identityId") String identityId,
+                                             @RequestParam(value = "sickReason") String sickReason,
+                                             @RequestParam(value = "ifFavour") String ifFavour,
+                                             @RequestParam(value = "covidTest") String covidTest,
+                                             @RequestParam(value = "bodyTemperature") Double bodyTemperature){
+        sickUserService.editSickUserInfoidentityId(identityId, sickReason,ifFavour, bodyTemperature,covidTest);
+        return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+    }
+
+    @GetMapping("/getSickUserInfoByIdentityId")
+    public ResponseTemplate getSickUserInfoByIdentityId(@RequestParam(value = "identityId") String identityId){
+        SickUserInfo sickUserInfo = sickUserService.getSickUserInfoByIdentityId(identityId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("sickUserInfo", sickUserInfo);
+        return ResponseTemplate.success(sickUserInfo, "查找病情人员信息成功");
+    }
 }
+
+
