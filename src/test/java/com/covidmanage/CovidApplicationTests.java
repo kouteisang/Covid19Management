@@ -1,11 +1,13 @@
 package com.covidmanage;
 
+import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
 import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,8 @@ class CovidApplicationTests {
     private CityInfoMapperExt cityInfoMapperExt;
     @Autowired
     private SickUserController sickUserController;
-
+    @Autowired
+    private NewsController newsController;
 
     @Test
     void contextLoads() {
@@ -125,5 +128,18 @@ class CovidApplicationTests {
     void getSickUserInfoByIdentityId(){
         ResponseTemplate info = sickUserController.getSickUserInfoByIdentityId("372929199801166317");
         System.out.println(info.toString());
+    }
+
+    @Test
+    void getNewsList(){
+        ResponseTemplate newsList = newsController.getNewsList(1, 10);
+        System.out.println(newsList.toString());
+    }
+
+
+    @Test
+    void testGet(){
+        String s = HttpUtil.doGet("https://lab.isaaclin.cn/nCoV/api/area", "UTF-8");
+        System.out.println(s);
     }
 }
