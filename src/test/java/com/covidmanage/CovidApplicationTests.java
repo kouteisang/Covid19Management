@@ -9,6 +9,7 @@ import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -152,5 +156,24 @@ class CovidApplicationTests {
         String curedCount = jsonObject1.getString("curedCount");
         log.info("curedCount = {}",curedCount);
        // System.out.println(jsonObject);
+    }
+
+    @Test
+    void mmTotime(long time){
+        //1617758105936
+        String s = DateUtil.millisecondToString(1617758105936l);
+        System.out.println(s);
+    }
+
+    @Test
+    void getAllSupportCities(){
+        String allCities = HttpUtil.doGet("https://lab.isaaclin.cn/nCoV/api/provinceName?lang=zh", "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(allCities);
+        JSONArray cities = jsonObject.getJSONArray("results");
+        List<String> supportCities = new ArrayList<>();
+        for(int i = 0; i < cities.size(); i ++){
+            supportCities.add((String) cities.get(i));
+        }
+        System.out.println((String) cities.get(0));
     }
 }

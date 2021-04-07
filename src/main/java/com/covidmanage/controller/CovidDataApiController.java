@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -60,5 +62,28 @@ public class CovidDataApiController {
         map.put("deadCount", deadCount);
         map.put("updateTime", updateTime);
         return ResponseTemplate.success(map);
+    }
+
+
+    @GetMapping("/getAllSupportCities")
+    public ResponseTemplate getAllSupportCities(){
+        String allCities = HttpUtil.doGet("https://lab.isaaclin.cn/nCoV/api/provinceName?lang=zh", "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(allCities);
+        JSONArray cities = jsonObject.getJSONArray("results");
+        List<String> supportCities = new ArrayList<>();
+        for(int i = 0; i < cities.size(); i ++){
+            if(cities.get(i).equals("上海市") || cities.get(i).equals("云南省") ||
+                    cities.get(i).equals("北京市") || cities.get(i).equals("四川省") || cities.get(i).equals("宁夏回族自治区") ||
+                    cities.get(i).equals("山东省") ||cities.get(i).equals("江苏省")||cities.get(i).equals("江西省")
+                    ||cities.get(i).equals("河北省") ||cities.get(i).equals("河南省")|| cities.get(i).equals("浙江省")
+                    ||cities.get(i).equals("黑龙江省")||cities.get(i).equals("青海省")||cities.get(i).equals("陕西省")||cities.get(i).equals("重庆市")
+                    ||cities.get(i).equals("辽宁省")||cities.get(i).equals("贵州省")
+                    ||cities.get(i).equals("西藏自治区") ||cities.get(i).equals("福建省")|| cities.get(i).equals("湖南省")
+                    ||cities.get(i).equals("湖北省")||cities.get(i).equals("海南省")||cities.get(i).equals("山西省")
+                    ||cities.get(i).equals("天津市")||cities.get(i).equals("安徽省")||cities.get(i).equals("广西壮族自治区"))
+                continue;
+            supportCities.add((String) cities.get(i));
+        }
+        return ResponseTemplate.success(supportCities);
     }
 }
