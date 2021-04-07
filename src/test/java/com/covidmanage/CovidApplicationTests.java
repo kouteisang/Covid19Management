@@ -1,5 +1,7 @@
 package com.covidmanage;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
 import com.covidmanage.dto.SickUserInfo;
@@ -10,12 +12,15 @@ import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -138,8 +143,14 @@ class CovidApplicationTests {
 
 
     @Test
-    void testGet(){
-        String s = HttpUtil.doGet("https://lab.isaaclin.cn/nCoV/api/area", "UTF-8");
-        System.out.println(s);
+    void testGet() throws UnsupportedEncodingException {
+        String s = HttpUtil.doGet("https://lab.isaaclin.cn/nCoV/api/area?latest=1&province="+ URLEncoder.encode("中国", "UTF-8"), "UTF-8");
+       // log.info("data = {}", s);
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        JSONArray results = jsonObject.getJSONArray("results");
+        JSONObject jsonObject1 = results.getJSONObject(0);
+        String curedCount = jsonObject1.getString("curedCount");
+        log.info("curedCount = {}",curedCount);
+       // System.out.println(jsonObject);
     }
 }
