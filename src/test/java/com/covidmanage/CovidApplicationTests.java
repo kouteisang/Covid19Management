@@ -2,6 +2,7 @@ package com.covidmanage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.covidmanage.controller.CommonController;
 import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
 import com.covidmanage.dto.SickUserInfo;
@@ -46,6 +47,8 @@ class CovidApplicationTests {
     private SickUserController sickUserController;
     @Autowired
     private NewsController newsController;
+    @Autowired
+    private CommonController commonController;
 
     @Test
     void contextLoads() {
@@ -175,5 +178,17 @@ class CovidApplicationTests {
             supportCities.add((String) cities.get(i));
         }
         System.out.println((String) cities.get(0));
+    }
+
+    @Test
+    void getAllSupplyKind(){
+        ResponseTemplate allSupplyKind = commonController.getAllSupplyKind();
+        System.out.println(allSupplyKind);
+    }
+
+    @Test
+    void getAllSupplyContent(){
+        ResponseTemplate contents = commonController.getSupplyContentByKind("医疗应急物资");
+        System.out.println(contents);
     }
 }

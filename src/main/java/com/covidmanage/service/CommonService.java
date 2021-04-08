@@ -1,6 +1,7 @@
 package com.covidmanage.service;
 
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
+import com.covidmanage.mapper.ext.SupplyInfoMapperExt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ public class CommonService {
 
     @Autowired
     private CityInfoMapperExt cityInfoMapperExt;
+    @Autowired
+    private SupplyInfoMapperExt supplyInfoMapperExt;
 
     /**
      * 得到所有省份
@@ -44,4 +47,22 @@ public class CommonService {
         return districts;
     }
 
+
+    /**
+     * 得到所有物资类型
+     */
+    public List<String> getAllSupplyKind(){
+        List<String> allSupplyKind = supplyInfoMapperExt.getAllSupplyKind();
+        return allSupplyKind;
+    }
+
+    /**
+     * 根据物资种类得到所有物资内容
+     * @param supplyKind
+     * @return
+     */
+    public List<String> getSupplyContentByKind(String supplyKind) {
+        List<String> supplyContent = supplyInfoMapperExt.getSupplyContentByKind(supplyKind);
+        return supplyContent;
+    }
 }

@@ -62,4 +62,23 @@ public class CommonController {
     }
 
 
+    /**
+     * 得到所有物资类型
+     */
+    @GetMapping("/getAllSupplyKind")
+    public ResponseTemplate getAllSupplyKind(){
+        List<String> supplyKind = commonService.getAllSupplyKind();
+        return ResponseTemplate.success(supplyKind);
+    }
+
+    /**
+     * 得到对应物资下的内容
+     */
+    @GetMapping("/getSupplyContentByKind")
+    public ResponseTemplate getSupplyContentByKind(@RequestParam(value = "supplyKind") String supplyKind){
+        List<String> supplyContent = commonService.getSupplyContentByKind(supplyKind);
+        return ResponseTemplate.success(supplyContent);
+    }
+
+
 }

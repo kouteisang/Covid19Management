@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.covidmanage.mapper.ext.SupplyInfoMapperExt">
+    <select id="getAllSupplyKind" resultType="java.lang.String">
+        select distinct supply_kind from supply_info
+    </select>
+
+    <select id="getSupplyContentByKind" resultType="java.lang.String">
+        select supply_content
+        from supply_info
+        where supply_kind = #{supplyKind}
+    </select>
+</mapper>
