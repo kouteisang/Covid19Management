@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.covidmanage.mapper.ext.SupplyNeedMapperExt">
+
+
+    <resultMap id="resultMap" type="com.covidmanage.dto.AskSupplyNeed">
+        <result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+        <result column="real_name" jdbcType="VARCHAR" property="realName" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="supply_type" jdbcType="VARCHAR" property="supplyType" />
+        <result column="supply_content" jdbcType="VARCHAR" property="supplyContent" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+        <result column="is_emergency" jdbcType="INTEGER" property="isEmergency" />
+        <result column="community" jdbcType="VARCHAR" property="community"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
+    </resultMap>
+
+    <select id="getAskForSupplyList" resultMap="resultMap">
+        select cu.identity_id, cu.real_name, cu.phone, cu.community,
+               sn.supply_type, sn.supply_content, sn.age, sn.is_emergency, sn.create_time, sn.suggestion
+        from community_user cu
+        inner join supply_need sn
+        on cu.identity_id = sn.identity_id
+        where
+        1 = 1
+        <if test="supplyType != null and supplyType.length > 0">
+            and sn.supply_type = #{supplyType, jdbcType=VARCHAR}
+        </if>
+        <if test="supplyContent != null and supplyContent.length > 0">
+            and  sn.supply_content = #{supplyContent,jdbcType=VARCHAR}
+        </if>
+        <if test="isEmergency != null">
+            and sn.is_emergency = #{isEmergency}
+        </if>
+    </select>
+</mapper>

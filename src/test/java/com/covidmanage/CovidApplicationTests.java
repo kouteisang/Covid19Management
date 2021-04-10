@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.covidmanage.controller.CommonController;
 import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
+import com.covidmanage.controller.SupplyController;
 import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
@@ -49,6 +50,8 @@ class CovidApplicationTests {
     private NewsController newsController;
     @Autowired
     private CommonController commonController;
+    @Autowired
+    private SupplyController supplyController;
 
     @Test
     void contextLoads() {
@@ -190,5 +193,16 @@ class CovidApplicationTests {
     void getAllSupplyContent(){
         ResponseTemplate contents = commonController.getSupplyContentByKind("医疗应急物资");
         System.out.println(contents);
+    }
+
+    @Test
+    void applySupply(){
+        supplyController.applySupply("372929199801166317","医疗应急物资","医用防护服",1,1,"");
+    }
+
+    @Test
+    void getAskForSupplyList(){
+        ResponseTemplate askForSupplyList = supplyController.getAskForSupplyList(1, 10, "", "", 1);
+        System.out.println(askForSupplyList);
     }
 }
