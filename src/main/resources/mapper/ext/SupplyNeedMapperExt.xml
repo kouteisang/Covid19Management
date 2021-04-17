@@ -34,4 +34,30 @@
             and sn.is_emergency = #{isEmergency}
         </if>
     </select>
+
+
+    <select id="getSupplyContentByAge" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select supply_content
+        from supply_need
+        where age = #{age}
+        group by supply_content
+        order by count(supply_content) desc
+        limit 1
+    </select>
+
+
+    <select id="getSupplyCountByAge" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(supply_content)
+        from supply_need
+        where age = #{age}
+        group by supply_content
+        order by count(supply_content) desc
+        limit 1
+    </select>
+
+    <select id="getSupplyKindCountByDay" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1)
+        from supply_need
+        where supply_type = #{sk} and create_time like CONCAT(#{day0},'%')
+    </select>
 </mapper>

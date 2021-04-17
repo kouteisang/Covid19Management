@@ -3,23 +3,73 @@ package com.covidmanage.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.ObjectName;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.rmi.registry.LocateRegistry;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.151.60.110:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://10.151.48.157:8080", maxAge = 3600)
 @RestController
 @RequestMapping("/covidApi")
 public class CovidDataApiController {
+
+    /**
+     * getOverAll
+     * @return
+     */
+    @GetMapping("/getOverAll")
+    public ResponseTemplate getOverAll(){
+        Map<String, Object> map = new HashMap<>();
+        String url = "https://lab.isaaclin.cn/nCoV/api/overall";
+        String overAllInfo = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(overAllInfo);
+        System.out.println(jsonObject);
+        JSONArray results = jsonObject.getJSONArray("results");
+        JSONObject result = results.getJSONObject(0);
+        String remark1 = result.getString("remark1");
+        String remark2 = result.getString("remark2");
+        String remark3 = result.getString("remark3");
+        String note1 = result.getString("note1");
+        String note2 = result.getString("note2");
+        String note3 = result.getString("note3");
+        Long updateTime = Long.parseLong(result.getString("updateTime"));
+        map.put("remark1", remark1);
+        map.put("remark2", remark2);
+        map.put("remark3", remark3);
+        map.put("note1", note1);
+        map.put("note2", note2);
+        map.put("note3", note3);
+        map.put("updateTime", DateUtil.millisecondToString(updateTime));
+        JSONObject globalStatistics = result.getJSONObject("globalStatistics");
+        String currentConfirmedCount = globalStatistics.getString("currentConfirmedCount");
+        String confirmedCount = globalStatistics.getString("confirmedCount");
+        String curedCount = globalStatistics.getString("curedCount");
+        String deadCount = globalStatistics.getString("deadCount");
+        String confirmedIncr = globalStatistics.getString("confirmedIncr");
+        String curedIncr = globalStatistics.getString("curedIncr");
+        String deadIncr = globalStatistics.getString("deadIncr");
+        String yesterdayConfirmedCountIncr = globalStatistics.getString("yesterdayConfirmedCountIncr");
+
+        map.put("currentConfirmedCount", Long.parseLong(currentConfirmedCount));
+        map.put("confirmedCount", Long.parseLong(confirmedCount));
+        map.put("curedCount", Long.parseLong(curedCount));
+        map.put("deadCount", Long.parseLong(deadCount));
+        map.put("confirmedCountYes", Long.parseLong(confirmedCount) - Long.parseLong(confirmedIncr));
+        map.put("curedCountYes", Long.parseLong(curedCount)-Long.parseLong(curedIncr));
+        map.put("deadCountYes", Long.parseLong(deadCount) - Long.parseLong(deadIncr));
+        map.put("now", (LocalDateTime.now().toString().split("T"))[0]);
+        map.put("yesterday", (LocalDateTime.now().plusDays(-1).toString().split("T"))[0]);
+        return ResponseTemplate.success(map);
+    }
 
     /**
      * 根据国家名得到具体疫情实况
@@ -47,7 +97,7 @@ public class CovidDataApiController {
         String suspectedCount = countryResult.getString("suspectedCount");
         String curedCount = countryResult.getString("curedCount");
         String deadCount = countryResult.getString("deadCount");
-        String updateTime = countryResult.getString("updateTime"); //1617758105936 这个地方还需要转换一下
+        Long updateTime = Long.parseLong(countryResult.getString("updateTime")); //1617758105936 这个地方还需要转换一下
 
         Map<String, String> map = new HashMap<>();
         map.put("locationId", locationId);
@@ -60,7 +110,7 @@ public class CovidDataApiController {
         map.put("suspectedCount", suspectedCount);
         map.put("curedCount", curedCount);
         map.put("deadCount", deadCount);
-        map.put("updateTime", updateTime);
+        map.put("updateTime", DateUtil.millisecondToString(updateTime));
         return ResponseTemplate.success(map);
     }
 

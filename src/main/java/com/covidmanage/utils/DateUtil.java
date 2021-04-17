@@ -7,7 +7,7 @@ public class DateUtil {
 
 
     public static String millisecondToString(long time){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         date.setTime(time);
         return simpleDateFormat.format(date);

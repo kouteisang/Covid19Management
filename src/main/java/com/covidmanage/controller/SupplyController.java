@@ -1,7 +1,7 @@
 package com.covidmanage.controller;
 
-import com.covidmanage.dto.AskSupplyNeed;
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.service.CommonService;
 import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.service.SupplyService;
 import com.covidmanage.utils.ResponseCode;
@@ -11,11 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.151.60.110:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://10.151.48.157:8080", maxAge = 3600)
 @RestController
 @RequestMapping("/user/supply")
 public class SupplyController {
@@ -24,6 +27,8 @@ public class SupplyController {
     public CommunityUserService communityUserService;
     @Autowired
     public SupplyService supplyService;
+    @Autowired
+    public CommonService commonService;
     /**
      * 物资申请
      * @param identityId
@@ -65,6 +70,53 @@ public class SupplyController {
                                                 @RequestParam(value = "isEmergency",  required = false) Integer isEmergency){
         PageHelper.startPage(page, size);
         Map<Object, Object> map = supplyService.getAskForSupplyList(page, size, supplyType, supplyContent, isEmergency);
+        return ResponseTemplate.success(map);
+    }
+
+    /**
+     * 得到每个年龄段最想要的物资
+     * @return
+     */
+    @GetMapping("/getSupplyContentByAge")
+    public ResponseTemplate getSupplyContentByAge(){
+        List<String> supplyContent = new ArrayList<>();
+        List<Integer> supplyCount = new ArrayList<>();
+        for(Integer i = 1; i <= 5; i ++){
+            String supplyContentByAge = supplyService.getSupplyContentByAge(i);
+            supplyContent.add(supplyContentByAge);
+            Integer supplyCountByAge = supplyService.getSupplyCountByAge(i);
+            supplyCount.add(supplyCountByAge);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("supplyContent", supplyContent);
+        map.put("supplyCount", supplyCount);
+        return ResponseTemplate.success(map);
+    }
+
+    /**
+     * 近五日缺少物品种类统计
+     */
+    @GetMapping("/getSupplyKindByDay")
+    public ResponseTemplate getSupplyKindByDay(){
+        List<String> supplyKinds = commonService.getAllSupplyKind();
+        List<String> days = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        int num = 0;
+        for(String sk : supplyKinds){
+            List<Integer> list = new ArrayList<>();
+            num ++;
+            for(int i = 5; i >= 1; i --){
+                int mus = -1 * i;
+                String day = LocalDateTime.now().plusDays(mus).toString();
+                String day0 = day.split("T")[0];
+                Integer supplyKindCountByDay = supplyService.getSupplyKindCountByDay(sk, day0);
+                list.add(supplyKindCountByDay);
+                if(num == 1)
+                    days.add(day0);
+            }
+            map.put(sk, list);
+        }
+        map.put("days", days);
         return ResponseTemplate.success(map);
     }
 }

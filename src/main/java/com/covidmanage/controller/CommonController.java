@@ -1,6 +1,7 @@
 package com.covidmanage.controller;
 
 import com.covidmanage.service.CommonService;
+import com.covidmanage.service.SupplyService;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.151.60.110:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://10.151.48.157:8080", maxAge = 3600)
 @RestController
 @RequestMapping("/common")
 public class CommonController {
 
     @Autowired
     private CommonService commonService;
+
 
     /**
      * 得到所有省份
@@ -79,6 +81,7 @@ public class CommonController {
         List<String> supplyContent = commonService.getSupplyContentByKind(supplyKind);
         return ResponseTemplate.success(supplyContent);
     }
+
 
 
 }

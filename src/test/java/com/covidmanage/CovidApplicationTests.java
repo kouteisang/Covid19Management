@@ -6,11 +6,13 @@ import com.covidmanage.controller.CommonController;
 import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
 import com.covidmanage.controller.SupplyController;
+import com.covidmanage.dto.CovidNews;
 import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.service.SupplyService;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
@@ -25,6 +27,7 @@ import javax.sql.DataSource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +55,8 @@ class CovidApplicationTests {
     private CommonController commonController;
     @Autowired
     private SupplyController supplyController;
+    @Autowired
+    private SupplyService supplyService;
 
     @Test
     void contextLoads() {
@@ -204,5 +209,62 @@ class CovidApplicationTests {
     void getAskForSupplyList(){
         ResponseTemplate askForSupplyList = supplyController.getAskForSupplyList(1, 10, "", "", 1);
         System.out.println(askForSupplyList);
+    }
+
+    @Test
+    void getSupplyContentByAge(){
+        Integer supplyContentByAge = supplyService.getSupplyCountByAge(2);
+        System.out.println(supplyContentByAge);
+    }
+
+    @Test
+    void getTime(){
+        String day = LocalDateTime.now().plusDays(-1).toString();
+        String[] ts = day.split("T");
+        System.out.println(ts[0]);
+    }
+
+    @Test
+    void getOverAll(){
+        String url = "https://lab.isaaclin.cn/nCoV/api/overall";
+        String overAllInfo = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(overAllInfo);
+        System.out.println(jsonObject);
+        JSONArray results = jsonObject.getJSONArray("results");
+        JSONObject result = results.getJSONObject(0);
+        String note = result.getString("remark1");
+        JSONObject globalStatistics = result.getJSONObject("globalStatistics");
+        System.out.println(globalStatistics);
+        //System.out.println("globalStatistics = ", globalStatistics);
+        String currentConfirmedCount = globalStatistics.getString("currentConfirmedCount");
+        System.out.println(currentConfirmedCount);
+    }
+
+    @Test
+    void getCovidNews(){
+        String url = "https://lab.isaaclin.cn/nCoV/api/news?page=1&num=10";
+        String countryData = HttpUtil.doGet(url, "UTF-8");
+        //得到json类型数据
+        JSONObject jsonObject = JSONObject.parseObject(countryData);
+        //得到json中results数组数据
+        JSONArray results = jsonObject.getJSONArray("results");
+        //得到results[0]的数据也就是具体某个country的数据
+        List<CovidNews> list = new ArrayList<>();
+        for(int i = 0; i < 10; i ++){
+            JSONObject result = results.getJSONObject(i);
+            String pubDate = DateUtil.millisecondToString(Long.parseLong(result.get("pubDate").toString()));
+            String title = result.get("title").toString();
+            String summary = result.get("summary").toString();
+            String infoSource = result.get("infoSource").toString();
+            String sourceUrl = result.get("sourceUrl").toString();
+            CovidNews covidNews = CovidNews.builder().id(i).
+                                    pubDate(pubDate).title(title).
+                                    summary(summary).infoSource(infoSource).
+                                    sourceUrl(sourceUrl).build();
+            list.add(covidNews);
+        }
+        for(CovidNews covidNew : list){
+            System.out.println(covidNew.getPubDate());
+        }
     }
 }

@@ -55,4 +55,21 @@ public class SupplyService {
         map.put("totalPage",totalpage);
         return map;
     }
+
+    public String getSupplyContentByAge(Integer age) {
+        String supplyContentByAge = supplyNeedMapperExt.getSupplyContentByAge(age);
+        if(supplyContentByAge == null) return "暂无缺失";
+        return supplyContentByAge;
+    }
+
+    public Integer getSupplyCountByAge(Integer age) {
+        Integer supplyCountByAge = supplyNeedMapperExt.getSupplyCountByAge(age);
+        if(supplyCountByAge == null) return 0;
+        return supplyCountByAge;
+    }
+
+    public Integer getSupplyKindCountByDay(String sk, String day0) {
+        Integer supplyKindCountByDay = supplyNeedMapperExt.getSupplyKindCountByDay(sk, day0);
+        return supplyKindCountByDay;
+    }
 }
