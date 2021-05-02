@@ -1,27 +1,43 @@
 package com.covidmanage.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.covidmanage.dto.CityCovidData;
+import com.covidmanage.dto.ProvinceData;
+import com.covidmanage.service.CommonService;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
+import com.sun.deploy.config.JCPConfig;
+import jdk.nashorn.internal.scripts.JO;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.relaxng.datatype.helpers.ParameterlessDatatypeBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.ObjectName;
+import javax.swing.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.rmi.registry.LocateRegistry;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.151.48.157:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://172.20.10.2:8080")
 @RestController
 @RequestMapping("/covidApi")
 public class CovidDataApiController {
 
+    @Autowired
+    private CommonService commonService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * getOverAll
      * @return
@@ -136,4 +152,149 @@ public class CovidDataApiController {
         }
         return ResponseTemplate.success(supportCities);
     }
+
+    @GetMapping("/getCovidDataByProvince")
+    public ResponseTemplate getCovidDataByProvince(@RequestParam(value = "province") String province) throws UnsupportedEncodingException {
+        String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode(province, "UTF-8");
+        String provinceData = HttpUtil.doGet(url, "UTF-8");
+        //得到json类型数据
+        JSONObject jsonObject = JSONObject.parseObject(provinceData);
+        //得到json中results数组数据
+        JSONArray results = jsonObject.getJSONArray("results");
+        JSONObject provinceResult = results.getJSONObject(0);
+        String provinceName = provinceResult.getString("provinceName"); //省的名字
+        Integer currentConfirmedCount =  Integer.parseInt(provinceResult.getString("currentConfirmedCount")); //当前确诊人数
+        Integer confirmedCount =  Integer.parseInt(provinceResult.getString("confirmedCount")); //总确诊人数
+        Integer suspectedCount =  Integer.parseInt(provinceResult.getString("suspectedCount")); //疑似病例
+        Integer curedCount =  Integer.parseInt(provinceResult.getString("curedCount")); //治愈人数
+        Integer deadCount =  Integer.parseInt(provinceResult.getString("deadCount"));  //死亡人数
+        JSONArray cities = provinceResult.getJSONArray("cities");
+        List<CityCovidData> list = new ArrayList<>();
+        for(int i = 0; i < cities.size(); i ++){
+            JSONObject cityData = cities.getJSONObject(i);
+            String cityName = cityData.getString("cityName");
+            Integer cityCurrentConfirmedCount = Integer.parseInt(cityData.getString("currentConfirmedCount"));
+            Integer cityConfirmedCount = Integer.parseInt(cityData.getString("confirmedCount"));
+            Integer citySuspectedCount = Integer.parseInt(cityData.getString("suspectedCount"));
+            Integer cityCuredCount = Integer.parseInt(cityData.getString("curedCount"));
+            Integer cityDeadCount = Integer.parseInt(cityData.getString("deadCount"));
+            Integer cityhighDangerCount = Integer.parseInt(cityData.getString("highDangerCount"));
+            Integer citymidDangerCount = Integer.parseInt(cityData.getString("midDangerCount"));
+            CityCovidData cityDataInfo = CityCovidData.builder().cityName(cityName)
+                    .currentConfirmedCount(cityCurrentConfirmedCount)
+                    .confirmedCount(cityConfirmedCount)
+                    .suspectedCount(citySuspectedCount)
+                    .curedCount(cityCuredCount)
+                    .deadCount(cityDeadCount)
+                    .highDangerCount(cityhighDangerCount)
+                    .midDangerCount(citymidDangerCount).build();
+            list.add(cityDataInfo);
+        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("list", list);
+        map.put("provinceName", provinceName);
+        map.put("currentConfirmedCount", currentConfirmedCount);
+        map.put("confirmedCount", confirmedCount);
+        map.put("suspectedCount", suspectedCount);
+        map.put("curedCount", curedCount);
+        map.put("deadCount", deadCount);
+        return ResponseTemplate.success(map);
+    }
+
+
+    @GetMapping("/getAllProvincesCovidData")
+    public ResponseTemplate getAllProvincesCovidData() throws UnsupportedEncodingException {
+        List<String> provinces = commonService.getAllProvince();
+        Map<Object, Object> mapConfirmed = new HashMap<>();
+        Map<Object, Object> mapCurrent = new HashMap<>();
+        Map<Object, Object> mapCured = new HashMap<>();
+        Map<Object, Object> mapDead = new HashMap<>();
+        Map<Object, Object> res = new HashMap<>();
+        List<ProvinceData> listConfirmed = new ArrayList<>();
+        List<ProvinceData> listCurrent = new ArrayList<>();
+        List<ProvinceData> listCured = new ArrayList<>();
+        List<ProvinceData> listDead = new ArrayList<>();
+        if(stringRedisTemplate.opsForValue().get("listConfirmed") != null){
+            for(String provinceName : provinces){
+                //得到累计确诊
+                String all = stringRedisTemplate.opsForValue().get(provinceName+"mapConfirmed");
+                mapConfirmed.put(provinceName, Integer.valueOf(all));
+                //得到目前确诊
+                String now = stringRedisTemplate.opsForValue().get(provinceName+"mapCurrent");
+                mapCurrent.put(provinceName, Integer.valueOf(now));
+                //得到治愈人数
+                String cure = stringRedisTemplate.opsForValue().get(provinceName+"mapCured");
+                mapCured.put(provinceName, Integer.valueOf(cure));
+                //得到死亡人数
+               // log.info("provinceName = {}", provinceName);
+                String dead = stringRedisTemplate.opsForValue().get(provinceName+"mapDead");
+                mapDead.put(provinceName, Integer.valueOf(dead));
+            }
+            //得到listConfirmed
+            String sConfirmed = stringRedisTemplate.opsForValue().get("listConfirmed");
+            listConfirmed = JSONObject.parseArray(sConfirmed, ProvinceData.class);
+            //得到listCurrent
+            String sCurrent = stringRedisTemplate.opsForValue().get("listCurrent");
+            listCurrent = JSONObject.parseArray(sCurrent, ProvinceData.class);
+            //得到listCured
+            String sCured = stringRedisTemplate.opsForValue().get("listCured");
+            listCured = JSONObject.parseArray(sCured, ProvinceData.class);
+            //得到listDead
+            String sDead = stringRedisTemplate.opsForValue().get("listDead");
+            listDead = JSONObject.parseArray(sDead, ProvinceData.class);
+
+            res.put("listConfirmed", listConfirmed);
+            res.put("listCurrent", listCurrent);
+            res.put("listCured", listCured);
+            res.put("listDead", listDead);
+            res.put("mapConfirmed", mapConfirmed);
+            res.put("mapCurrent", mapCurrent);
+            res.put("mapCured", mapCured);
+            res.put("mapDead", mapDead);
+            return ResponseTemplate.success(res);
+        }
+        if(stringRedisTemplate.opsForValue().get("listConfirmed") == null){
+            for(String province : provinces){
+                String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode(province, "UTF-8");
+                String provinceData = HttpUtil.doGet(url, "UTF-8");
+                //得到json类型数据
+                JSONObject jsonObject = JSONObject.parseObject(provinceData);
+                //得到json中results数组数据
+                JSONArray results = jsonObject.getJSONArray("results");
+                JSONObject provinceResult = results.getJSONObject(0);
+                String provinceName = provinceResult.getString("provinceName"); //省份名称
+                Integer confirmedCount = Integer.parseInt(provinceResult.getString("confirmedCount")); //累计确诊人数
+                Integer currentConfirmedCount = Integer.parseInt(provinceResult.getString("currentConfirmedCount")); //当前确诊人数
+                Integer curedCount = Integer.parseInt(provinceResult.getString("curedCount")); //累计治愈人数
+                Integer deadCount = Integer.parseInt(provinceResult.getString("deadCount")); //累计死亡人数
+                mapConfirmed.put(provinceName, confirmedCount);
+                mapCurrent.put(provinceName,currentConfirmedCount);
+                mapCured.put(provinceName, curedCount);
+                mapDead.put(provinceName, deadCount);
+                listConfirmed.add(ProvinceData.builder().province(provinceName).count(confirmedCount).build());
+                listCurrent.add(ProvinceData.builder().province(provinceName).count(currentConfirmedCount).build());
+                listCured.add(ProvinceData.builder().province(provinceName).count(curedCount).build());
+                listDead.add(ProvinceData.builder().province(provinceName).count(deadCount).build());
+                stringRedisTemplate.opsForValue().set(provinceName+"mapConfirmed", String.valueOf(confirmedCount), 3, TimeUnit.HOURS);
+                stringRedisTemplate.opsForValue().set(provinceName+"mapCurrent", String.valueOf(currentConfirmedCount), 3, TimeUnit.HOURS);
+                stringRedisTemplate.opsForValue().set(provinceName+"mapCured", String.valueOf(curedCount), 3, TimeUnit.HOURS);
+                stringRedisTemplate.opsForValue().set(provinceName+"mapDead", String.valueOf(deadCount), 3, TimeUnit.HOURS);
+            }
+            stringRedisTemplate.opsForValue().set("listConfirmed", JSON.toJSON(listConfirmed).toString(),3 ,TimeUnit.HOURS);
+            stringRedisTemplate.opsForValue().set("listCurrent", JSON.toJSON(listCurrent).toString(),3 ,TimeUnit.HOURS);
+            stringRedisTemplate.opsForValue().set("listCured", JSON.toJSON(listCured).toString(),3 ,TimeUnit.HOURS);
+            stringRedisTemplate.opsForValue().set("listDead", JSON.toJSON(listDead).toString(),3 ,TimeUnit.HOURS);
+            res.put("listConfirmed", listConfirmed);
+            res.put("listCurrent", listCurrent);
+            res.put("listCured", listCured);
+            res.put("listDead", listDead);
+            res.put("mapConfirmed", mapConfirmed);
+            res.put("mapCurrent", mapCurrent);
+            res.put("mapCured", mapCured);
+            res.put("mapDead", mapDead);
+        }
+        return ResponseTemplate.success(res);
+
+    }
+
 }

@@ -6,11 +6,13 @@ import com.covidmanage.controller.CommonController;
 import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
 import com.covidmanage.controller.SupplyController;
+import com.covidmanage.dto.CityCovidData;
 import com.covidmanage.dto.CovidNews;
 import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.service.CommonService;
 import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.service.SupplyService;
 import com.covidmanage.utils.DateUtil;
@@ -21,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -28,10 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @SpringBootTest
@@ -57,6 +58,17 @@ class CovidApplicationTests {
     private SupplyController supplyController;
     @Autowired
     private SupplyService supplyService;
+    @Autowired
+    private CommonService commonService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Test
+    void testRedis(){
+        System.out.println(redisTemplate);
+        System.out.println(stringRedisTemplate);
+    }
 
     @Test
     void contextLoads() {
@@ -265,6 +277,47 @@ class CovidApplicationTests {
         }
         for(CovidNews covidNew : list){
             System.out.println(covidNew.getPubDate());
+        }
+    }
+
+    @Test
+    void getCovidDataByProvince() throws UnsupportedEncodingException {
+        String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode("山东省", "UTF-8");
+        String provinceData = HttpUtil.doGet(url, "UTF-8");
+        //得到json类型数据
+        JSONObject jsonObject = JSONObject.parseObject(provinceData);
+        //得到json中results数组数据
+        JSONArray results = jsonObject.getJSONArray("results");
+        JSONObject provinceResult = results.getJSONObject(0);
+        String provinceName = provinceResult.getString("provinceName"); //省的名字
+        Integer currentConfirmedCount =  Integer.parseInt(provinceResult.getString("currentConfirmedCount")); //当前确诊人数
+        Integer confirmedCount =  Integer.parseInt(provinceResult.getString("confirmedCount")); //总确诊人数
+        Integer suspectedCount =  Integer.parseInt(provinceResult.getString("suspectedCount")); //疑似病例
+        Integer curedCount =  Integer.parseInt(provinceResult.getString("curedCount")); //治愈人数
+        Integer deadCount =  Integer.parseInt(provinceResult.getString("deadCount"));  //死亡人数
+        JSONArray cities = provinceResult.getJSONArray("cities");
+        List<CityCovidData> list = new ArrayList<>();
+        System.out.println(cities);
+       // cities.getJSONObject()
+    }
+
+    @Test
+    void getPronviceData() throws UnsupportedEncodingException {
+        List<String> provinces = commonService.getAllProvince();
+        Map<Object, Object> map = new HashMap<>();
+        for(String province : provinces){
+            String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode(province, "UTF-8");
+            String provinceData = HttpUtil.doGet(url, "UTF-8");
+            //得到json类型数据
+            JSONObject jsonObject = JSONObject.parseObject(provinceData);
+            //得到json中results数组数据
+            JSONArray results = jsonObject.getJSONArray("results");
+            JSONObject provinceResult = results.getJSONObject(0);
+            String provinceName = provinceResult.getString("provinceName"); //省份名称
+            Integer confirmedCount = Integer.parseInt(provinceResult.getString("confirmedCount")); //累计确诊人数
+            Integer currentConfirmedCount = Integer.parseInt(provinceResult.getString("currentConfirmedCount")); //当前确诊人数
+            log.info("province = {}", province);
+            map.put(provinceName, confirmedCount);
         }
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.151.48.157:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://172.20.10.2:8080")
 @RestController
 @RequestMapping("/common")
 public class CommonController {
@@ -27,7 +27,7 @@ public class CommonController {
      * 得到所有省份
      * @return
      */
-    @GetMapping("/getAllProvince")
+    @GetMapping("/")
     public ResponseTemplate getAllProvince(){
         List<String> provinces = commonService.getAllProvince();
         Map<String, Object> map = new HashMap<>();

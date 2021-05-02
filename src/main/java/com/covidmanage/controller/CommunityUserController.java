@@ -7,19 +7,21 @@ import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.151.48.157:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://172.20.10.2:8080")
 @RestController
 @RequestMapping("/user")
 public class CommunityUserController {
 
     @Autowired
-    public CommunityUserService communityUserService;
+    private CommunityUserService communityUserService;
+
 
     /**
      * 查找小区用户

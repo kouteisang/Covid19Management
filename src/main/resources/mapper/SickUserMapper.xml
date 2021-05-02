@@ -146,11 +146,9 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into sick_user (identity_id, sick_reason, when_sick, 
-      if_favour, body_temperature, update_time, 
-      create_time, covid_test)
+      if_favour, body_temperature, covid_test)
     values (#{identityId,jdbcType=VARCHAR}, #{sickReason,jdbcType=VARCHAR}, #{whenSick,jdbcType=VARCHAR}, 
-      #{ifFavour,jdbcType=VARCHAR}, #{bodyTemperature,jdbcType=DOUBLE}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{covidTest,jdbcType=VARCHAR})
+      #{ifFavour,jdbcType=VARCHAR}, #{bodyTemperature,jdbcType=DOUBLE},#{covidTest,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.covidmanage.pojo.SickUser">
     <!--

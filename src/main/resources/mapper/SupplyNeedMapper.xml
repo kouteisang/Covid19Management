@@ -181,11 +181,9 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into supply_need (identity_id, supply_type, supply_content, 
-      age, is_emergency, update_time, 
-      create_time, suggestion)
+      age, is_emergency, suggestion)
     values (#{identityId,jdbcType=VARCHAR}, #{supplyType,jdbcType=VARCHAR}, #{supplyContent,jdbcType=VARCHAR}, 
-      #{age,jdbcType=INTEGER}, #{isEmergency,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{suggestion,jdbcType=LONGVARCHAR})
+      #{age,jdbcType=INTEGER}, #{isEmergency,jdbcType=INTEGER}, #{suggestion,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.covidmanage.pojo.SupplyNeed">
     <!--

@@ -176,9 +176,9 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into news_info (news_title, update_time, create_time, 
+    insert into news_info (news_title,
       news_content)
-    values (#{newsTitle,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{newsTitle,jdbcType=VARCHAR},
       #{newsContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.covidmanage.pojo.NewsInfo">
