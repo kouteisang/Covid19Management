@@ -463,6 +463,76 @@ public class CityInfoExample {
             addCriterion("district not between", value1, value2, "district");
             return (Criteria) this;
         }
+
+        public Criteria andPicurlIsNull() {
+            addCriterion("picurl is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlIsNotNull() {
+            addCriterion("picurl is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlEqualTo(String value) {
+            addCriterion("picurl =", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlNotEqualTo(String value) {
+            addCriterion("picurl <>", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlGreaterThan(String value) {
+            addCriterion("picurl >", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlGreaterThanOrEqualTo(String value) {
+            addCriterion("picurl >=", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlLessThan(String value) {
+            addCriterion("picurl <", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlLessThanOrEqualTo(String value) {
+            addCriterion("picurl <=", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlLike(String value) {
+            addCriterion("picurl like", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlNotLike(String value) {
+            addCriterion("picurl not like", value, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlIn(List<String> values) {
+            addCriterion("picurl in", values, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlNotIn(List<String> values) {
+            addCriterion("picurl not in", values, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlBetween(String value1, String value2) {
+            addCriterion("picurl between", value1, value2, "picurl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicurlNotBetween(String value1, String value2) {
+            addCriterion("picurl not between", value1, value2, "picurl");
+            return (Criteria) this;
+        }
     }
 
     /**

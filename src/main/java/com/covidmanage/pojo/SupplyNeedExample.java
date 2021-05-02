@@ -585,6 +585,76 @@ public class SupplyNeedExample {
             return (Criteria) this;
         }
 
+        public Criteria andSuggestionIsNull() {
+            addCriterion("suggestion is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionIsNotNull() {
+            addCriterion("suggestion is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionEqualTo(String value) {
+            addCriterion("suggestion =", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionNotEqualTo(String value) {
+            addCriterion("suggestion <>", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionGreaterThan(String value) {
+            addCriterion("suggestion >", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionGreaterThanOrEqualTo(String value) {
+            addCriterion("suggestion >=", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionLessThan(String value) {
+            addCriterion("suggestion <", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionLessThanOrEqualTo(String value) {
+            addCriterion("suggestion <=", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionLike(String value) {
+            addCriterion("suggestion like", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionNotLike(String value) {
+            addCriterion("suggestion not like", value, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionIn(List<String> values) {
+            addCriterion("suggestion in", values, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionNotIn(List<String> values) {
+            addCriterion("suggestion not in", values, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionBetween(String value1, String value2) {
+            addCriterion("suggestion between", value1, value2, "suggestion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuggestionNotBetween(String value1, String value2) {
+            addCriterion("suggestion not between", value1, value2, "suggestion");
+            return (Criteria) this;
+        }
+
         public Criteria andUpdateTimeIsNull() {
             addCriterion("update_time is null");
             return (Criteria) this;

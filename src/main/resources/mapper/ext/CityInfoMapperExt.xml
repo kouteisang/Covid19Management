@@ -25,4 +25,8 @@
     select distinct district from city_info where city = #{city}
   </select>
 
+  <select id="getProvinceWithPic" resultType="com.covidmanage.dto.ProvinceWithPicDTO">
+    select distinct province, picurl from city_info
+  </select>
+
 </mapper>

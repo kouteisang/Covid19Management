@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.covidmanage.dto.CityCovidData;
+import com.covidmanage.dto.ProviceCovidDataDTO;
 import com.covidmanage.dto.ProvinceData;
+import com.covidmanage.dto.ProvinceWithPicDTO;
 import com.covidmanage.service.CommonService;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
@@ -204,7 +206,7 @@ public class CovidDataApiController {
 
     @GetMapping("/getAllProvincesCovidData")
     public ResponseTemplate getAllProvincesCovidData() throws UnsupportedEncodingException {
-        List<String> provinces = commonService.getAllProvince();
+        List<ProvinceWithPicDTO> provinces = commonService.getProvinceWithPic();
         Map<Object, Object> mapConfirmed = new HashMap<>();
         Map<Object, Object> mapCurrent = new HashMap<>();
         Map<Object, Object> mapCured = new HashMap<>();
@@ -214,8 +216,10 @@ public class CovidDataApiController {
         List<ProvinceData> listCurrent = new ArrayList<>();
         List<ProvinceData> listCured = new ArrayList<>();
         List<ProvinceData> listDead = new ArrayList<>();
-        if(stringRedisTemplate.opsForValue().get("listConfirmed") != null){
-            for(String provinceName : provinces){
+        List<ProviceCovidDataDTO> listProviceCovidDataDTO = new ArrayList<>();
+        if(stringRedisTemplate.opsForValue().get("listProviceCovidDataDTO") != null){
+            for(ProvinceWithPicDTO province : provinces){
+                String provinceName = province.getProvince();
                 //得到累计确诊
                 String all = stringRedisTemplate.opsForValue().get(provinceName+"mapConfirmed");
                 mapConfirmed.put(provinceName, Integer.valueOf(all));
@@ -242,6 +246,9 @@ public class CovidDataApiController {
             //得到listDead
             String sDead = stringRedisTemplate.opsForValue().get("listDead");
             listDead = JSONObject.parseArray(sDead, ProvinceData.class);
+            //得到listProviceCovidDataDTO
+            String slistProviceCovidDataDTO = stringRedisTemplate.opsForValue().get("listProviceCovidDataDTO");
+            listProviceCovidDataDTO = JSONObject.parseArray(slistProviceCovidDataDTO, ProviceCovidDataDTO.class);
 
             res.put("listConfirmed", listConfirmed);
             res.put("listCurrent", listCurrent);
@@ -251,11 +258,12 @@ public class CovidDataApiController {
             res.put("mapCurrent", mapCurrent);
             res.put("mapCured", mapCured);
             res.put("mapDead", mapDead);
+            res.put("listProviceCovidDataDTO", listProviceCovidDataDTO);
             return ResponseTemplate.success(res);
         }
-        if(stringRedisTemplate.opsForValue().get("listConfirmed") == null){
-            for(String province : provinces){
-                String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode(province, "UTF-8");
+        if(stringRedisTemplate.opsForValue().get("listProviceCovidDataDTO") == null){
+            for(ProvinceWithPicDTO province : provinces){
+                String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode(province.getProvince(), "UTF-8");
                 String provinceData = HttpUtil.doGet(url, "UTF-8");
                 //得到json类型数据
                 JSONObject jsonObject = JSONObject.parseObject(provinceData);
@@ -267,6 +275,15 @@ public class CovidDataApiController {
                 Integer currentConfirmedCount = Integer.parseInt(provinceResult.getString("currentConfirmedCount")); //当前确诊人数
                 Integer curedCount = Integer.parseInt(provinceResult.getString("curedCount")); //累计治愈人数
                 Integer deadCount = Integer.parseInt(provinceResult.getString("deadCount")); //累计死亡人数
+                Integer suspectedCount = Integer.parseInt(provinceResult.getString("suspectedCount")); //得到疑似感染人数
+                listProviceCovidDataDTO.add(ProviceCovidDataDTO.builder()
+                        .province(province.getProvince())
+                        .picUrl(province.getPicurl())
+                        .curedCount(curedCount)
+                        .deadCount(deadCount)
+                        .currentConfirmedCount(currentConfirmedCount)
+                        .suspectedCount(suspectedCount)
+                        .confirmedCount(confirmedCount).build());
                 mapConfirmed.put(provinceName, confirmedCount);
                 mapCurrent.put(provinceName,currentConfirmedCount);
                 mapCured.put(provinceName, curedCount);
@@ -284,6 +301,8 @@ public class CovidDataApiController {
             stringRedisTemplate.opsForValue().set("listCurrent", JSON.toJSON(listCurrent).toString(),3 ,TimeUnit.HOURS);
             stringRedisTemplate.opsForValue().set("listCured", JSON.toJSON(listCured).toString(),3 ,TimeUnit.HOURS);
             stringRedisTemplate.opsForValue().set("listDead", JSON.toJSON(listDead).toString(),3 ,TimeUnit.HOURS);
+            stringRedisTemplate.opsForValue().set("listProviceCovidDataDTO", JSON.toJSON(listProviceCovidDataDTO).toString(),3 ,TimeUnit.HOURS);
+
             res.put("listConfirmed", listConfirmed);
             res.put("listCurrent", listCurrent);
             res.put("listCured", listCured);
@@ -292,6 +311,7 @@ public class CovidDataApiController {
             res.put("mapCurrent", mapCurrent);
             res.put("mapCured", mapCured);
             res.put("mapDead", mapDead);
+            res.put("listProviceCovidDataDTO", listProviceCovidDataDTO);
         }
         return ResponseTemplate.success(res);
 

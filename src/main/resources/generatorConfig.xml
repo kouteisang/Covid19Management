@@ -55,11 +55,11 @@
             <generatedKey column="id" sqlStatement="Mysql" identity="true" />
         </table>
 
-<!--        <table tableName="community_manager" domainObjectName="CommunityManager" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
-<!--            <property name="useActualColumnNames" value="false" />-->
-<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
-<!--            <generatedKey column="id" sqlStatement="Mysql" identity="true" />-->
-<!--        </table>-->
+        <table tableName="city_info" domainObjectName="CityInfo" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false" />
+            <!-- 数据库表主键 -->
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+        </table>
 
 
     </context>

@@ -8,6 +8,7 @@ import com.covidmanage.controller.SickUserController;
 import com.covidmanage.controller.SupplyController;
 import com.covidmanage.dto.CityCovidData;
 import com.covidmanage.dto.CovidNews;
+import com.covidmanage.dto.ProvinceWithPicDTO;
 import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
@@ -318,6 +319,14 @@ class CovidApplicationTests {
             Integer currentConfirmedCount = Integer.parseInt(provinceResult.getString("currentConfirmedCount")); //当前确诊人数
             log.info("province = {}", province);
             map.put(provinceName, confirmedCount);
+        }
+    }
+
+    @Test
+    void getProvinceWithPic(){
+        List<ProvinceWithPicDTO> list = cityInfoMapperExt.getProvinceWithPic();
+        for(ProvinceWithPicDTO provinceWithPicDTO: list){
+            System.out.println(provinceWithPicDTO.toString());
         }
     }
 }

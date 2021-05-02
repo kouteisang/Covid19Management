@@ -1,5 +1,6 @@
 package com.covidmanage.service;
 
+import com.covidmanage.dto.ProvinceWithPicDTO;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.SupplyInfoMapperExt;
 import lombok.extern.slf4j.Slf4j;
@@ -64,5 +65,14 @@ public class CommonService {
     public List<String> getSupplyContentByKind(String supplyKind) {
         List<String> supplyContent = supplyInfoMapperExt.getSupplyContentByKind(supplyKind);
         return supplyContent;
+    }
+
+
+    /**
+     * 得到所有省份以及图片信息
+     */
+    public List<ProvinceWithPicDTO> getProvinceWithPic(){
+        List<ProvinceWithPicDTO> list = cityInfoMapperExt.getProvinceWithPic();
+        return list;
     }
 }
