@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://172.20.10.2:8080")
+@CrossOrigin(origins = "http://172.20.10.2:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/manager/sick")
 public class SickUserController {

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://172.20.10.2:8080")
+@CrossOrigin(origins = "http://172.20.10.2:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/manager/news")
 public class NewsController {

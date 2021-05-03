@@ -16,4 +16,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         //addResourceLocations("file:D://images//");
     }
 
+
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/","/manager/login");
+    }
+
 }

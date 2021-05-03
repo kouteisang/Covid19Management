@@ -9,11 +9,14 @@ import com.covidmanage.controller.SupplyController;
 import com.covidmanage.dto.*;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
+import com.covidmanage.pojo.CommunityManager;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommonService;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.service.LoginService;
 import com.covidmanage.service.SupplyService;
 import com.covidmanage.utils.DateUtil;
+import com.covidmanage.utils.EncryptUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,8 @@ import java.util.*;
 @SpringBootTest
 class CovidApplicationTests {
 
+    @Autowired
+    private LoginService loginService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
@@ -345,5 +350,18 @@ class CovidApplicationTests {
                     .body(body).build();
             rumors.add(rumor);
         }
+    }
+
+    @Test
+    void getEncrypyUtil(){
+        String code = EncryptUtil.Base64Encode("cshchcsh19981999");
+        System.out.println(code);
+        System.out.println(EncryptUtil.Base64Decode("Y3NoY2hjc2gxOTk4MTk5OQ=="));
+    }
+
+    @Test
+    void findUserBuInfo(){
+        CommunityManager huangcheng = loginService.findUserByInfo("huangcheng", "Y3NoY2hjc2gxOTk4MTk5OQ==");
+        System.out.println(huangcheng);
     }
 }
