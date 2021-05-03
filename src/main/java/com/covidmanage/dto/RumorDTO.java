@@ -1,0 +1,14 @@
+package com.covidmanage.dto;
+
+import lombok.*;
+
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RumorDTO {
+    private String title;
+    private String mainSummary;
+    private String body;
+}

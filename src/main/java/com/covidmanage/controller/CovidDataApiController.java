@@ -4,10 +4,7 @@ package com.covidmanage.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.covidmanage.dto.CityCovidData;
-import com.covidmanage.dto.ProviceCovidDataDTO;
-import com.covidmanage.dto.ProvinceData;
-import com.covidmanage.dto.ProvinceWithPicDTO;
+import com.covidmanage.dto.*;
 import com.covidmanage.service.CommonService;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
@@ -157,6 +154,10 @@ public class CovidDataApiController {
 
     @GetMapping("/getCovidDataByProvince")
     public ResponseTemplate getCovidDataByProvince(@RequestParam(value = "province") String province) throws UnsupportedEncodingException {
+        List<String> cityNames = new ArrayList<>();
+        List<Integer> confirmedCountList = new ArrayList<>();
+        List<Integer> curedCountList = new ArrayList<>();
+        List<Integer> deadCountList = new ArrayList<>();
         String url = "https://lab.isaaclin.cn/nCoV/api/area?latest=1&province=" + URLEncoder.encode(province, "UTF-8");
         String provinceData = HttpUtil.doGet(url, "UTF-8");
         //得到json类型数据
@@ -175,6 +176,8 @@ public class CovidDataApiController {
         for(int i = 0; i < cities.size(); i ++){
             JSONObject cityData = cities.getJSONObject(i);
             String cityName = cityData.getString("cityName");
+            if(cityName == "待明确地区") continue;
+            cityNames.add(cityName);
             Integer cityCurrentConfirmedCount = Integer.parseInt(cityData.getString("currentConfirmedCount"));
             Integer cityConfirmedCount = Integer.parseInt(cityData.getString("confirmedCount"));
             Integer citySuspectedCount = Integer.parseInt(cityData.getString("suspectedCount"));
@@ -182,6 +185,9 @@ public class CovidDataApiController {
             Integer cityDeadCount = Integer.parseInt(cityData.getString("deadCount"));
             Integer cityhighDangerCount = Integer.parseInt(cityData.getString("highDangerCount"));
             Integer citymidDangerCount = Integer.parseInt(cityData.getString("midDangerCount"));
+            confirmedCountList.add(cityConfirmedCount);
+            curedCountList.add(cityCuredCount);
+            deadCountList.add(cityDeadCount);
             CityCovidData cityDataInfo = CityCovidData.builder().cityName(cityName)
                     .currentConfirmedCount(cityCurrentConfirmedCount)
                     .confirmedCount(cityConfirmedCount)
@@ -200,6 +206,10 @@ public class CovidDataApiController {
         map.put("suspectedCount", suspectedCount);
         map.put("curedCount", curedCount);
         map.put("deadCount", deadCount);
+        map.put("cityNames", cityNames);
+        map.put("confirmedCountList", confirmedCountList);
+        map.put("curedCountList", curedCountList);
+        map.put("deadCountList", deadCountList);
         return ResponseTemplate.success(map);
     }
 
@@ -317,4 +327,26 @@ public class CovidDataApiController {
 
     }
 
+    @GetMapping("/getCovidRumors")
+    public ResponseTemplate getCovidRumors(@RequestParam(value = "page") Integer page){
+        List<RumorDTO> rumors = new ArrayList<>();
+        String url = "https://lab.isaaclin.cn/nCoV/api/rumors?page=" + page;
+        String rumorString = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(rumorString);
+        JSONArray results = jsonObject.getJSONArray("results");
+        for(int i = 0; i < 10; i ++){
+            JSONObject result = results.getJSONObject(i);
+            String mainSummary = result.getString("mainSummary");
+            String title = result.getString("title");
+            String body = result.getString("body");
+            RumorDTO rumor = RumorDTO.builder()
+                    .mainSummary(mainSummary)
+                    .title(title)
+                    .body(body).build();
+            rumors.add(rumor);
+        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("rumors", rumors);
+        return ResponseTemplate.success(map);
+    }
 }

@@ -6,10 +6,7 @@ import com.covidmanage.controller.CommonController;
 import com.covidmanage.controller.NewsController;
 import com.covidmanage.controller.SickUserController;
 import com.covidmanage.controller.SupplyController;
-import com.covidmanage.dto.CityCovidData;
-import com.covidmanage.dto.CovidNews;
-import com.covidmanage.dto.ProvinceWithPicDTO;
-import com.covidmanage.dto.SickUserInfo;
+import com.covidmanage.dto.*;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.pojo.CommunityUser;
@@ -327,6 +324,26 @@ class CovidApplicationTests {
         List<ProvinceWithPicDTO> list = cityInfoMapperExt.getProvinceWithPic();
         for(ProvinceWithPicDTO provinceWithPicDTO: list){
             System.out.println(provinceWithPicDTO.toString());
+        }
+    }
+
+    @Test
+    void getRumors(){
+        List<RumorDTO> rumors = new ArrayList<>();
+        String url = "https://lab.isaaclin.cn/nCoV/api/rumors?page=" + 1;
+        String rumorString = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(rumorString);
+        JSONArray results = jsonObject.getJSONArray("results");
+        for(int i = 0; i < 10; i ++){
+            JSONObject result = results.getJSONObject(i);
+            String mainSummary = result.getString("mainSummary");
+            String title = result.getString("title");
+            String body = result.getString("body");
+            RumorDTO rumor = RumorDTO.builder()
+                    .mainSummary(mainSummary)
+                    .title(title)
+                    .body(body).build();
+            rumors.add(rumor);
         }
     }
 }
