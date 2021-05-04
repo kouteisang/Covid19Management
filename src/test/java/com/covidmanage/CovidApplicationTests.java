@@ -9,6 +9,7 @@ import com.covidmanage.controller.SupplyController;
 import com.covidmanage.dto.*;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
+import com.covidmanage.mapper.ext.VaccineLocationMapperExt;
 import com.covidmanage.pojo.CommunityManager;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.CommonService;
@@ -67,6 +68,9 @@ class CovidApplicationTests {
     private RedisTemplate redisTemplate;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private VaccineLocationMapperExt vaccineLocationMapperExt;
+
     @Test
     void testRedis(){
         System.out.println(redisTemplate);
@@ -363,5 +367,32 @@ class CovidApplicationTests {
     void findUserBuInfo(){
         CommunityManager huangcheng = loginService.findUserByInfo("huangcheng", "Y3NoY2hjc2gxOTk4MTk5OQ==");
         System.out.println(huangcheng);
+    }
+
+    @Test
+    void getDate(){
+        LocalDateTime now = LocalDateTime.now();
+        String s = now.toLocalDate().toString();
+        System.out.println(s);
+        String ss = HttpUtil.doGet("https://api.inews.qq.com/newsqa/v1/automation/modules/list?modules=ChinaVaccineTrendData", "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(ss);
+        JSONObject data = jsonObject.getJSONObject("data");
+        JSONArray chinaVaccineTrendData = data.getJSONArray("ChinaVaccineTrendData");
+        List<Integer> totalVaccinationsList = new ArrayList<>();
+        List<Double> totalVaccinationsPerHundredList = new ArrayList<>();
+        int len = chinaVaccineTrendData.size();
+        for(int i = len-1; i >= len - 30; i --){
+            JSONObject coviddata = chinaVaccineTrendData.getJSONObject(i);
+            String date = coviddata.getString("date");
+            Integer totalVaccinations = coviddata.getInteger("total_vaccinations");
+            Double totalVaccinationsPerHundred = coviddata.getDouble("total_vaccinations_per_hundred");
+            totalVaccinationsList.add(totalVaccinations);
+            totalVaccinationsPerHundredList.add(totalVaccinationsPerHundred);
+        }
+    }
+
+    @Test
+    void insertVaccineLocation(){
+        vaccineLocationMapperExt.addVaccineLocation("1","2","3","4","5");
     }
 }

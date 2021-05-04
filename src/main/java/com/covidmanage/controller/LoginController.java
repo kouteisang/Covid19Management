@@ -40,6 +40,7 @@ public class LoginController {
             HttpSession session = httpServletRequest.getSession(true);
             session.setAttribute("COMMUNITY_MANAGER", communityManager);
             map.put("COMMUNITY_MANAGER", communityManager);
+            map.put("role","MANAGER");
             map.put("status", 200);
         }
         else {
@@ -48,13 +49,4 @@ public class LoginController {
         return ResponseTemplate.success(map);
     }
 
-
-    @RequestMapping("/test")
-    public void login(HttpServletResponse response) {
-        Cookie cookie = new Cookie("test","test");
-        cookie.setMaxAge(30 * 60);//半小时过期
-        cookie.setPath("/");//("/")表示的是访问当前工程下的所有webApp都会产生cookie
-        cookie.setHttpOnly(false);
-        response.addCookie(cookie);
-    }
 }
