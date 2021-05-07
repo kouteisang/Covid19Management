@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-@CrossOrigin(origins = "http://172.20.10.2:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://192.168.0.9:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/upload")
 public class UploadController {

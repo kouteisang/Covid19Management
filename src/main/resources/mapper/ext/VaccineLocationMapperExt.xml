@@ -21,4 +21,20 @@
         values (#{hospitalName}, #{hospitalLocation}, #{hospitalTel}, #{type}, #{picUrl})
     </insert>
 
+    <select id="getVaccineList" resultType="com.covidmanage.pojo.VaccineLocation">
+        select *
+        from vaccine_location
+        where
+        1 = 1
+        <if test="hospitalName != null">
+            and hospital_name like CONCAT('%',#{hospitalName},'%')
+        </if>
+        <if test="hospitalLocation != null">
+            and  hospital_location like CONCAT('%',#{hospitalLocation},'%')
+        </if>
+        <if test="hostipalTel != null">
+            and hostipal_tel like CONCAT('%',#{hostipalTel},'%')
+        </if>
+    </select>
+
 </mapper>

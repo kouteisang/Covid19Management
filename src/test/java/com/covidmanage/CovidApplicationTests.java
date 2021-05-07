@@ -2,20 +2,14 @@ package com.covidmanage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.covidmanage.controller.CommonController;
-import com.covidmanage.controller.NewsController;
-import com.covidmanage.controller.SickUserController;
-import com.covidmanage.controller.SupplyController;
+import com.covidmanage.controller.*;
 import com.covidmanage.dto.*;
 import com.covidmanage.mapper.ext.CityInfoMapperExt;
 import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.mapper.ext.VaccineLocationMapperExt;
 import com.covidmanage.pojo.CommunityManager;
 import com.covidmanage.pojo.CommunityUser;
-import com.covidmanage.service.CommonService;
-import com.covidmanage.service.CommunityUserService;
-import com.covidmanage.service.LoginService;
-import com.covidmanage.service.SupplyService;
+import com.covidmanage.service.*;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.EncryptUtil;
 import com.covidmanage.utils.HttpUtil;
@@ -70,6 +64,10 @@ class CovidApplicationTests {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private VaccineLocationMapperExt vaccineLocationMapperExt;
+    @Autowired
+    private VaccineService vaccineService;
+    @Autowired
+    private VacinneController vacinneController;
 
     @Test
     void testRedis(){
@@ -395,4 +393,15 @@ class CovidApplicationTests {
     void insertVaccineLocation(){
         vaccineLocationMapperExt.addVaccineLocation("1","2","3","4","5");
     }
+
+    @Test
+    void getVaccineList(){
+        Map<Object, Object> vaccineList = vaccineService.getVaccineList(1, 10, "", "", "");
+        System.out.println(vaccineList);
+    }
+
+//    @Test
+//    void ReservationVaccine(){
+//        vacinneController.reserveVaccine("372929199801166317","济南医院", 1);
+//    }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://172.20.10.2:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://192.168.0.9:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/common")
 public class CommonController {
@@ -27,7 +27,7 @@ public class CommonController {
      * 得到所有省份
      * @return
      */
-    @GetMapping("/")
+    @GetMapping("/getAllProvince")
     public ResponseTemplate getAllProvince(){
         List<String> provinces = commonService.getAllProvince();
         Map<String, Object> map = new HashMap<>();
@@ -80,6 +80,17 @@ public class CommonController {
     public ResponseTemplate getSupplyContentByKind(@RequestParam(value = "supplyKind") String supplyKind){
         List<String> supplyContent = commonService.getSupplyContentByKind(supplyKind);
         return ResponseTemplate.success(supplyContent);
+    }
+
+    /**
+     * 处理疫苗类型
+     */
+    @GetMapping("/dealWithVaccinetype")
+    public ResponseTemplate dealWithVaccinetype(@RequestParam(value = "vaccineType") String vaccineType){
+        String[] vaccineTypes = vaccineType.split(",");
+        Map<Object, Object> types = new HashMap<>();
+        types.put("types", vaccineTypes);
+        return ResponseTemplate.success(types);
     }
 
 

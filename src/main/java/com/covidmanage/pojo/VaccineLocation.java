@@ -1,8 +1,11 @@
 package com.covidmanage.pojo;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@Builder
 public class VaccineLocation implements Serializable {
     /**
      *

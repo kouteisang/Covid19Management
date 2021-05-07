@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.covidmanage.mapper.ext.VaccineReservationMapperExt">
+    <resultMap id="BaseResultMap" type="com.covidmanage.pojo.VaccineLocation">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+        <result column="real_name" jdbcType="VARCHAR" property="realName" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="hospital_name" jdbcType="VARCHAR" property="hospitalName" />
+        <result column="vaccine_status" jdbcType="INTEGER" property="vaccineStatus" />
+        <result column="vaccine_type" jdbcType="INTEGER" property="vaccineType" />
+        <result column="picUrl" jdbcType="VARCHAR" property="picurl" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+</mapper>
