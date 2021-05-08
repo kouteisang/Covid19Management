@@ -2,7 +2,7 @@ package com.covidmanage.enums;
 
 public enum IsEmergency {
     TRUE_EMERGENCY(1, "是"),
-    FALSE_EMERGENCY(2, "否");
+    FALSE_EMERGENCY(0, "否");
     private Integer key;
     private String value;
 

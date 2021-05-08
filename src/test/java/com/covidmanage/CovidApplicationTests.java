@@ -9,6 +9,7 @@ import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.mapper.ext.VaccineLocationMapperExt;
 import com.covidmanage.pojo.CommunityManager;
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.pojo.VaccineReservation;
 import com.covidmanage.service.*;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.EncryptUtil;
@@ -68,6 +69,8 @@ class CovidApplicationTests {
     private VaccineService vaccineService;
     @Autowired
     private VacinneController vacinneController;
+    @Autowired
+    private ReservationSpecificService reservationSpecificService;
 
     @Test
     void testRedis(){
@@ -400,8 +403,16 @@ class CovidApplicationTests {
         System.out.println(vaccineList);
     }
 
+    @Test
+    void ReservationVaccine(){
+        VaccineReservation b = vaccineService.selectByIdentityId("372929199801166317");
+        System.out.println(b);
+    }
+
+
 //    @Test
-//    void ReservationVaccine(){
-//        vacinneController.reserveVaccine("372929199801166317","济南医院", 1);
+//    void getLatestUpdateTime(){
+//        String date = reservationSpecificService.updateDeleteByIdentityId("372929199801166317");
+//        System.out.println(date);
 //    }
 }

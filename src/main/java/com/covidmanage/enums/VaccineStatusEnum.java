@@ -2,8 +2,10 @@ package com.covidmanage.enums;
 
 public enum VaccineStatusEnum {
     ZERO(0, "已预约"),
-    ONE(1, "已接种第一针"),
-    two(2, "已接种第二针"),
+    ONE(1, "已预约第一针"),
+    two(2, "已预约第二针"),
+    three(3, "已接种第一针"),
+    four(4, "已接种第二针"),
     ;
     private Integer key;
     private String value;

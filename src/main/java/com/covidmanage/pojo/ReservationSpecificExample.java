@@ -395,73 +395,133 @@ public class ReservationSpecificExample {
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumIsNull() {
-            addCriterion("vaccine_num is null");
+        public Criteria andHospitalNameIsNull() {
+            addCriterion("hospital_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumIsNotNull() {
-            addCriterion("vaccine_num is not null");
+        public Criteria andHospitalNameIsNotNull() {
+            addCriterion("hospital_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumEqualTo(String value) {
-            addCriterion("vaccine_num =", value, "vaccineNum");
+        public Criteria andHospitalNameEqualTo(String value) {
+            addCriterion("hospital_name =", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumNotEqualTo(String value) {
-            addCriterion("vaccine_num <>", value, "vaccineNum");
+        public Criteria andHospitalNameNotEqualTo(String value) {
+            addCriterion("hospital_name <>", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumGreaterThan(String value) {
-            addCriterion("vaccine_num >", value, "vaccineNum");
+        public Criteria andHospitalNameGreaterThan(String value) {
+            addCriterion("hospital_name >", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumGreaterThanOrEqualTo(String value) {
-            addCriterion("vaccine_num >=", value, "vaccineNum");
+        public Criteria andHospitalNameGreaterThanOrEqualTo(String value) {
+            addCriterion("hospital_name >=", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumLessThan(String value) {
-            addCriterion("vaccine_num <", value, "vaccineNum");
+        public Criteria andHospitalNameLessThan(String value) {
+            addCriterion("hospital_name <", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumLessThanOrEqualTo(String value) {
-            addCriterion("vaccine_num <=", value, "vaccineNum");
+        public Criteria andHospitalNameLessThanOrEqualTo(String value) {
+            addCriterion("hospital_name <=", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumLike(String value) {
-            addCriterion("vaccine_num like", value, "vaccineNum");
+        public Criteria andHospitalNameLike(String value) {
+            addCriterion("hospital_name like", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumNotLike(String value) {
-            addCriterion("vaccine_num not like", value, "vaccineNum");
+        public Criteria andHospitalNameNotLike(String value) {
+            addCriterion("hospital_name not like", value, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumIn(List<String> values) {
-            addCriterion("vaccine_num in", values, "vaccineNum");
+        public Criteria andHospitalNameIn(List<String> values) {
+            addCriterion("hospital_name in", values, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumNotIn(List<String> values) {
-            addCriterion("vaccine_num not in", values, "vaccineNum");
+        public Criteria andHospitalNameNotIn(List<String> values) {
+            addCriterion("hospital_name not in", values, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumBetween(String value1, String value2) {
-            addCriterion("vaccine_num between", value1, value2, "vaccineNum");
+        public Criteria andHospitalNameBetween(String value1, String value2) {
+            addCriterion("hospital_name between", value1, value2, "hospitalName");
             return (Criteria) this;
         }
 
-        public Criteria andVaccineNumNotBetween(String value1, String value2) {
-            addCriterion("vaccine_num not between", value1, value2, "vaccineNum");
+        public Criteria andHospitalNameNotBetween(String value1, String value2) {
+            addCriterion("hospital_name not between", value1, value2, "hospitalName");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusIsNull() {
+            addCriterion("vaccine_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusIsNotNull() {
+            addCriterion("vaccine_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusEqualTo(Integer value) {
+            addCriterion("vaccine_status =", value, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusNotEqualTo(Integer value) {
+            addCriterion("vaccine_status <>", value, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusGreaterThan(Integer value) {
+            addCriterion("vaccine_status >", value, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("vaccine_status >=", value, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusLessThan(Integer value) {
+            addCriterion("vaccine_status <", value, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("vaccine_status <=", value, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusIn(List<Integer> values) {
+            addCriterion("vaccine_status in", values, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusNotIn(List<Integer> values) {
+            addCriterion("vaccine_status not in", values, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusBetween(Integer value1, Integer value2) {
+            addCriterion("vaccine_status between", value1, value2, "vaccineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaccineStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("vaccine_status not between", value1, value2, "vaccineStatus");
             return (Criteria) this;
         }
 
@@ -475,62 +535,52 @@ public class ReservationSpecificExample {
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedEqualTo(String value) {
+        public Criteria andIsDeletedEqualTo(Integer value) {
             addCriterion("is_deleted =", value, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedNotEqualTo(String value) {
+        public Criteria andIsDeletedNotEqualTo(Integer value) {
             addCriterion("is_deleted <>", value, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedGreaterThan(String value) {
+        public Criteria andIsDeletedGreaterThan(Integer value) {
             addCriterion("is_deleted >", value, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedGreaterThanOrEqualTo(String value) {
+        public Criteria andIsDeletedGreaterThanOrEqualTo(Integer value) {
             addCriterion("is_deleted >=", value, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedLessThan(String value) {
+        public Criteria andIsDeletedLessThan(Integer value) {
             addCriterion("is_deleted <", value, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedLessThanOrEqualTo(String value) {
+        public Criteria andIsDeletedLessThanOrEqualTo(Integer value) {
             addCriterion("is_deleted <=", value, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedLike(String value) {
-            addCriterion("is_deleted like", value, "isDeleted");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsDeletedNotLike(String value) {
-            addCriterion("is_deleted not like", value, "isDeleted");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsDeletedIn(List<String> values) {
+        public Criteria andIsDeletedIn(List<Integer> values) {
             addCriterion("is_deleted in", values, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedNotIn(List<String> values) {
+        public Criteria andIsDeletedNotIn(List<Integer> values) {
             addCriterion("is_deleted not in", values, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedBetween(String value1, String value2) {
+        public Criteria andIsDeletedBetween(Integer value1, Integer value2) {
             addCriterion("is_deleted between", value1, value2, "isDeleted");
             return (Criteria) this;
         }
 
-        public Criteria andIsDeletedNotBetween(String value1, String value2) {
+        public Criteria andIsDeletedNotBetween(Integer value1, Integer value2) {
             addCriterion("is_deleted not between", value1, value2, "isDeleted");
             return (Criteria) this;
         }

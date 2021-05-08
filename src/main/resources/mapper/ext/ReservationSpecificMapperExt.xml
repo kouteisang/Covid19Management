@@ -14,4 +14,24 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     </resultMap>
+
+    <select id="getLatestUpdateTime" resultType="java.lang.String">
+        select id
+        from reservation_specific
+        where identity_id = #{identityId}
+        order by create_time desc
+        limit 1
+    </select>
+
+    <update id="updateDeleteByIdentityId">
+        update reservation_specific
+        set is_deleted = 1
+        where identity_id = #{identityId} and id = #{id}
+    </update>
+
+    <select id="getVaccineSpecificByIdentityId" resultType="com.covidmanage.pojo.ReservationSpecific">
+        select *
+        from reservation_specific
+        where identity_id = #{identityId}
+    </select>
 </mapper>

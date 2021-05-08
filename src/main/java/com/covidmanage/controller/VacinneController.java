@@ -2,12 +2,18 @@ package com.covidmanage.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.covidmanage.dto.VaccineReservationDTO;
 import com.covidmanage.dto.VaccineSituationDataDTO;
+import com.covidmanage.dto.VaccineSpevificDTO;
 import com.covidmanage.enums.VaccineStatusEnum;
+import com.covidmanage.enums.VaccineTypeEnum;
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.pojo.ReservationSpecific;
 import com.covidmanage.pojo.VaccineReservation;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.service.ReservationSpecificService;
 import com.covidmanage.service.VaccineService;
+import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
@@ -30,6 +36,8 @@ public class VacinneController {
     private VaccineService vaccineService;
     @Autowired
     private CommunityUserService communityUserService;
+    @Autowired
+    private ReservationSpecificService reservationSpecificService;
 
     @GetMapping("/getChinaVacinneData")
     public ResponseTemplate getChinaVacinneData(){
@@ -124,15 +132,85 @@ public class VacinneController {
                                            @RequestParam(value = "hospitalName") String hospitalName,
                                            @RequestParam(value = "vaccineStatus") Integer vaccineStatus,
                                            @RequestParam(value = "vaccineType") Integer vaccineType){
-        if(vaccineStatus.equals(VaccineStatusEnum.two.getKey())){
-
-        }
-        boolean vaccineReservation = vaccineService.selectByIdentityId(identityId);
-        if(vaccineReservation == false){
-            return ResponseTemplate.fail(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
+        VaccineReservation vaccineReservation = vaccineService.selectByIdentityId(identityId);
+        if(vaccineStatus == 2) {
+            if (vaccineReservation == null) {
+                return ResponseTemplate.fail(ResponseCode.NO_FIRST_RECORD.val(), ResponseCode.NO_FIRST_RECORD.msg());
+            }
         }
         CommunityUser userInfo = communityUserService.findUserByIndentityId(identityId);
-        vaccineService.reserveVaccine(userInfo.getIdentityId(), userInfo.getRealName(), userInfo.getPhone(), hospitalName, vaccineStatus, vaccineType,"");
+        if(vaccineStatus == 2){
+            if(vaccineReservation.getVaccineType() != vaccineType){
+                return ResponseTemplate.fail(ResponseCode.WRONG_VACCINE_TYPE.val(),
+                        ResponseCode.WRONG_VACCINE_TYPE.msg()+ VaccineTypeEnum.getValueByKey(vaccineReservation.getVaccineType())+"!");
+            }
+            vaccineService.updateReservationStatusByIdentityId(identityId, vaccineStatus, hospitalName);
+        }else if(vaccineStatus == 1){
+            vaccineService.reserveVaccine(userInfo.getIdentityId(), userInfo.getRealName(), userInfo.getPhone(), hospitalName, vaccineStatus, vaccineType,"");
+        }
+        reservationSpecificService.insertReservationInfo(userInfo.getIdentityId(), userInfo.getRealName(), hospitalName, vaccineStatus, 0);
         return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+    }
+
+    @GetMapping("/getVaccineReservationList")
+    public ResponseTemplate getVaccineReservationList(@RequestParam(value = "page") Integer page,
+                                                      @RequestParam(value = "size") Integer size,
+                                                      @RequestParam(value = "identityId") String identityId,
+                                                      @RequestParam(value = "realName") String realName,
+                                                      @RequestParam(value = "phone") String phone){
+        PageHelper.startPage(page, size);
+        Map<Object, Object> vaccineReservationMap = vaccineService.getVaccineReservationList(page, size, identityId, realName, phone);
+        return ResponseTemplate.success(vaccineReservationMap);
+    }
+
+    @GetMapping("/getVaccineInfoByIdentityId")
+    public ResponseTemplate getVaccineInfoByIdentityId(@RequestParam(value = "identityId") String identityId){
+        VaccineReservation vaccineReservation = vaccineService.selectByIdentityId(identityId);
+        VaccineReservationDTO vaccineReservationDTO = VaccineReservationDTO.builder()
+                .id(vaccineReservation.getId())
+                .identityId(vaccineReservation.getIdentityId())
+                .realName(vaccineReservation.getRealName())
+                .phone(vaccineReservation.getPhone())
+                .hospitalName(vaccineReservation.getHospitalName())
+                .vaccineStatus(VaccineStatusEnum.getValueByKey(vaccineReservation.getVaccineStatus()))
+                .vaccineType(VaccineTypeEnum.getValueByKey(vaccineReservation.getVaccineType()))
+                .picurl(vaccineReservation.getPicurl())
+                .createTime(DateUtil.dateToString(vaccineReservation.getCreateTime()))
+                .updateTime(DateUtil.dateToString(vaccineReservation.getUpdateTime()))
+                .build();
+        Map<Object, Object> map = new HashMap<>();
+        map.put("vaccineReservationDTO", vaccineReservationDTO);
+        return ResponseTemplate.success(map);
+    }
+
+    @PostMapping("/updateVaccineReservation")
+    public ResponseTemplate updateVaccineReservation(@RequestParam(value = "identityId") String identityId,
+                                                     @RequestParam(value = "vaccineStatus") Integer vaccineStatus,
+                                                     @RequestParam(value = "picUrl") String picUrl,
+                                                     @RequestParam(value = "hospitalName") String hospitalName){
+        CommunityUser userInfo = communityUserService.findUserByIndentityId(identityId);
+        vaccineService.updateReservationStatusFinishByIdentityId(identityId, vaccineStatus, picUrl);
+        reservationSpecificService.insertReservationInfo(identityId, userInfo.getRealName(),hospitalName, vaccineStatus, 0);
+        return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+    }
+
+    @PostMapping("/updateVaccineReservationCancel")
+    public ResponseTemplate updateVaccineReservationCancel(@RequestParam(value = "identityId") String identityId,
+                                                           @RequestParam(value = "vaccineStatus") Integer vaccineStatus){
+        if(vaccineStatus == 1){
+            vaccineService.deleteVaccineReservationByIdentityId(identityId);
+        }else if(vaccineStatus == 2){
+            vaccineService.updateReservationStatusCancelByIdentityId(identityId);
+        }
+        reservationSpecificService.updateDeleteByIdentityId(identityId);
+        return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+    }
+
+    @GetMapping("/getVaccineSpecificByIdentityId")
+    public ResponseTemplate getVaccineSpecificByIdentityId(@RequestParam(value = "identityId") String identityId){
+        List<VaccineSpevificDTO> vaccineSpevificDTOS = reservationSpecificService.getVaccineSpecificByIdentityId(identityId);
+        Map<Object, Object> map = new HashMap<>();
+        map.put("vaccineSpevificDTOS", vaccineSpevificDTOS);
+        return ResponseTemplate.success(map);
     }
 }
