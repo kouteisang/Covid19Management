@@ -1,7 +1,10 @@
 package com.covidmanage.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.covidmanage.service.CommonService;
 import com.covidmanage.service.SupplyService;
+import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +95,41 @@ public class CommonController {
         Map<Object, Object> types = new HashMap<>();
         types.put("types", vaccineTypes);
         return ResponseTemplate.success(types);
+    }
+
+    @GetMapping("/getWeatherInfo")
+    public ResponseTemplate getWeatherInfo(){
+
+        String url = "https://restapi.amap.com/v3/weather/weatherInfo?key=643d6b4d35d9b5e57cd7bea1f94f1533&city=370300&extensions=all";
+        String s = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        JSONArray forecasts = jsonObject.getJSONArray("forecasts");
+        JSONArray casts = forecasts.getJSONObject(0).getJSONArray("casts");
+        List<String> dateList = new ArrayList<>();
+        List<String> dayweatherList = new ArrayList<>();
+        List<String> nightweatherList = new ArrayList<>();
+        List<Integer> daytempList = new ArrayList<>();
+        List<Integer> nighttempList = new ArrayList<>();
+        for(int i = 0; i < casts.size(); i ++){
+            JSONObject object = casts.getJSONObject(i);
+            String date = object.getString("date");
+            dateList.add(date);
+            String dayweather = object.getString("dayweather");
+            dayweatherList.add(dayweather);
+            String nightweather = object.getString("nightweather");
+            nightweatherList.add(nightweather);
+            String daytemp = object.getString("daytemp");
+            daytempList.add(Integer.parseInt(daytemp));
+            String nighttemp = object.getString("nighttemp");
+            nighttempList.add(Integer.parseInt(nighttemp));
+        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("dateList",dateList);
+        map.put("dayweatherList", dayweatherList);
+        map.put("nightweatherList", nightweatherList);
+        map.put("daytempList", daytempList);
+        map.put("nighttempList", nighttempList);
+        return ResponseTemplate.success(map);
     }
 
 

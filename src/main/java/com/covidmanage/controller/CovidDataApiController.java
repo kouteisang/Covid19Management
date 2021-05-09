@@ -83,6 +83,11 @@ public class CovidDataApiController {
         map.put("deadCountYes", Long.parseLong(deadCount) - Long.parseLong(deadIncr));
         map.put("now", (LocalDateTime.now().toString().split("T"))[0]);
         map.put("yesterday", (LocalDateTime.now().plusDays(-1).toString().split("T"))[0]);
+
+        map.put("currentConfirmedCountPercent", String.format("%.1f",100.0*(Long.parseLong(confirmedCount)*1.0)/( Long.parseLong(confirmedCount) + Long.parseLong(curedCount) +Long.parseLong(deadCount))));
+        map.put("curedCountPercent", String.format("%.1f",100.0*(Long.parseLong(curedCount)*1.0)/(Long.parseLong(confirmedCount) + Long.parseLong(curedCount) +Long.parseLong(deadCount))));
+        map.put("deadCountPercent", String.format("%.1f",100.0*(Long.parseLong(deadCount)*1.0)/(Long.parseLong(confirmedCount) + Long.parseLong(curedCount) +Long.parseLong(deadCount))));
+
         return ResponseTemplate.success(map);
     }
 

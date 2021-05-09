@@ -134,7 +134,7 @@ public class VacinneController {
                                            @RequestParam(value = "vaccineType") Integer vaccineType){
         VaccineReservation vaccineReservation = vaccineService.selectByIdentityId(identityId);
         if(vaccineStatus == 2) {
-            if (vaccineReservation == null) {
+            if (vaccineReservation == null ||  vaccineReservation.getVaccineStatus() != 3) {
                 return ResponseTemplate.fail(ResponseCode.NO_FIRST_RECORD.val(), ResponseCode.NO_FIRST_RECORD.msg());
             }
         }

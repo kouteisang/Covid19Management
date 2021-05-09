@@ -11,10 +11,7 @@ import com.covidmanage.pojo.CommunityManager;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.pojo.VaccineReservation;
 import com.covidmanage.service.*;
-import com.covidmanage.utils.DateUtil;
-import com.covidmanage.utils.EncryptUtil;
-import com.covidmanage.utils.HttpUtil;
-import com.covidmanage.utils.ResponseTemplate;
+import com.covidmanage.utils.*;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
@@ -23,13 +20,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.w3c.dom.ls.LSOutput;
 
 import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @SpringBootTest
@@ -409,10 +412,48 @@ class CovidApplicationTests {
         System.out.println(b);
     }
 
+    @Test
+    void LocalDateTime(){
+        String[] now = LocalDateTime.now().toString().split("T");
+        System.out.println(now[0] + " " + now[1]);
+    }
 
 //    @Test
-//    void getLatestUpdateTime(){
-//        String date = reservationSpecificService.updateDeleteByIdentityId("372929199801166317");
-//        System.out.println(date);
+//    void getVaccineSpecificByIdentityId(){
+//        reservationSpecificService.getVaccineSpecificByIdentityId("")
 //    }
+
+    @Test
+    void getLatestUpdateTime() throws UnknownHostException {
+
+            String url = "https://restapi.amap.com/v3/weather/weatherInfo?key=643d6b4d35d9b5e57cd7bea1f94f1533&city=370300&extensions=all";
+            String s = HttpUtil.doGet(url, "UTF-8");
+            JSONObject jsonObject = JSONObject.parseObject(s);
+            JSONArray forecasts = jsonObject.getJSONArray("forecasts");
+            JSONArray casts = forecasts.getJSONObject(0).getJSONArray("casts");
+            List<String> dateList = new ArrayList<>();
+            List<String> dayweatherList = new ArrayList<>();
+            List<String> nightweatherList = new ArrayList<>();
+            List<Integer> daytempList = new ArrayList<>();
+            List<Integer> nighttempList = new ArrayList<>();
+            for(int i = 0; i < casts.size(); i ++){
+                JSONObject object = casts.getJSONObject(i);
+                String date = object.getString("date");
+                dateList.add(date);
+                String dayweather = object.getString("dayweather");
+                dayweatherList.add(dayweather);
+                String nightweather = object.getString("nightweather");
+                nightweatherList.add(nightweather);
+                String daytemp = object.getString("daytemp");
+                daytempList.add(Integer.parseInt(daytemp));
+                String nighttemp = object.getString("nighttemp");
+                nighttempList.add(Integer.parseInt(nighttemp));
+            }
+            Map<Object, Object> map = new HashMap<>();
+            map.put("dateList",dateList);
+            map.put("dayweatherList", dayweatherList);
+            map.put("nightweatherList", nightweatherList);
+            map.put("daytempList", daytempList);
+            map.put("nighttempList", nighttempList);
+    }
 }

@@ -18,8 +18,12 @@ public class LoginService {
     @Autowired
     private CommunityManagerMapperExt communityManagerMapperExt;
 
-    public CommunityManager findUserByInfo(String username, String password){
-        CommunityManager userInfo = communityManagerMapperExt.findUserByInfo(username, password);
+    public CommunityManager findUserByInfo(String identityId, String password){
+        CommunityManager userInfo = communityManagerMapperExt.findUserByInfo(identityId, password);
         return userInfo;
+    }
+
+    public void register(String identityId, String password, String username, String picUrl) {
+        communityManagerMapperExt.register(identityId, password, username, picUrl);
     }
 }

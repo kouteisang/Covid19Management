@@ -8,5 +8,10 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface CommunityManagerMapperExt extends CommunityManagerMapper {
 
-    CommunityManager findUserByInfo(@Param("username") String username, @Param("password") String password);
+    CommunityManager findUserByInfo(@Param("identityId") String identityId, @Param("password") String password);
+
+    void register(@Param("identityId") String identityId,
+                  @Param("password") String password,
+                  @Param("username") String username,
+                  @Param("picUrl") String picUrl);
 }
