@@ -3,6 +3,8 @@ package com.covidmanage.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.covidmanage.dto.CovidNews;
+import com.covidmanage.dto.CovidNewsTencentDTO;
+import com.covidmanage.utils.CommonUtil;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseTemplate;
@@ -45,6 +47,36 @@ public class CovidNewsController {
         }
         Map<String, Object> map = new HashMap<>();
         map.put("list",list);
+        return ResponseTemplate.success(map);
+    }
+
+    @GetMapping("/getCovidNewsListTencent")
+    public ResponseTemplate getCovidNewsListTencent(@RequestParam(value = "province") String province) {
+        String letter = CommonUtil.returnFirstLetter(province);
+        String url = "https://api.dreamreader.qq.com/news/v1/province/news/list?province_code="+letter+"&page_size=10";
+        String s = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        JSONObject data = jsonObject.getJSONObject("data");
+        Map<Object, Object> map = new HashMap<>();
+        JSONArray items = data.getJSONArray("items");
+        List<CovidNewsTencentDTO> covidNewsTencentDTOS = new ArrayList<>();
+        for(int i = 0; i < items.size() ; i ++){
+            JSONObject object = items.getJSONObject(i);
+            String title = object.getString("title");
+            String publishTime = object.getString("publish_time");
+            String newsUrl = object.getString("news_url");
+            String srcfrom = object.getString("srcfrom");
+            String shortcut = object.getString("shortcut");
+            CovidNewsTencentDTO news = CovidNewsTencentDTO.builder()
+                    .title(title)
+                    .publishTime(publishTime)
+                    .newsUrl(newsUrl)
+                    .srcform(srcfrom)
+                    .shortcut(shortcut)
+                    .build();
+            covidNewsTencentDTOS.add(news);
+        }
+        map.put("covidNewsTencentDTOS", covidNewsTencentDTOS);
         return ResponseTemplate.success(map);
     }
 }

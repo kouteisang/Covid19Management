@@ -12,6 +12,7 @@ import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.pojo.VaccineReservation;
 import com.covidmanage.service.*;
 import com.covidmanage.utils.*;
+import jdk.nashorn.internal.scripts.JO;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
@@ -456,4 +457,60 @@ class CovidApplicationTests {
             map.put("daytempList", daytempList);
             map.put("nighttempList", nighttempList);
     }
+
+
+    @Test
+    void Test1(){
+        String allCities = HttpUtil.doGet("https://api.inews.qq.com/newsqa/v1/automation/modules/list?modules=FAutoCountryConfirmAdd", "UTF-8");
+        List<String> supportCities = new ArrayList<>();
+        JSONObject jsonObject = JSONObject.parseObject(allCities);
+        JSONObject data = jsonObject.getJSONObject("data");
+        String fAutoCountryConfirmAdd = data.getJSONObject("FAutoCountryConfirmAdd").toString();
+        String all = fAutoCountryConfirmAdd.replace("{", "").replace("}", "");
+        String[] allCountry = all.split(",");
+        for(int i = 0; i < allCountry.length ; i++){
+            String[] split = allCountry[i].split(":");
+            String country = split[0].replace("\"", "");
+            supportCities.add(country);
+        }
+    }
+
+
+    @Test
+    void Test2(){
+        String allCountryData = HttpUtil.doGet("https://api.inews.qq.com/newsqa/v1/automation/foreign/country/ranklist", "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(allCountryData);
+        JSONArray data = jsonObject.getJSONArray("data");
+        for(int i = 0; i < data.size(); i ++){
+            JSONObject object = data.getJSONObject(i);
+            if(object.getString("name").equals("美国")){
+                System.out.println(object);
+            }
+           // System.out.println(object.getString("name"));
+        }
+    }
+
+
+    @Test
+    void Test3() throws UnsupportedEncodingException {
+        String url1 = "https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=provinceCompare";
+        String s = HttpUtil.doGet(url1, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        System.out.println(jsonObject.getJSONObject("data").getJSONObject("provinceCompare").getJSONObject("台湾").getInteger("nowConfirm"));
+        //Integer integer = jsonObject.getJSONObject("data").getJSONObject("provinceCompare").getJSONObject("辽宁").getInteger("nowConfirm");
+       // System.out.println(integer);
+    }
+    @Test
+    void Test4() throws UnsupportedEncodingException {
+        String url = "https://api.dreamreader.qq.com/news/v1/province/news/list?province_code="+"sd"+"&page_size=10";
+        String s = HttpUtil.doGet(url, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        JSONObject data = jsonObject.getJSONObject("data");
+        System.out.println(data);
+        JSONArray items = data.getJSONArray("items");
+        for(int i = 0; i < items.size() ; i ++){
+            System.out.println(items.getJSONObject(i));
+        }
+    }
+
 }
