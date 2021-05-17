@@ -19,4 +19,28 @@
         insert into arrive_info(identity_id, departure_location, arrive_time)
         values(#{identityId}, #{departureLocation}, #{arriveTime})
     </insert>
+
+    <select id="getArrivalList" resultType="com.covidmanage.dto.ArrivalInfoDTO">
+        select ai.departure_location,
+               ai.arrive_time,
+               cu.real_name,
+               cu.phone,
+               cu.emergency_name,
+               cu.emergency_phone,
+               cu.community,
+               cu.identity_id
+        from arrive_info ai, community_user cu
+        where
+              ai.identity_id = cu.identity_id
+            <if test="identityId != null">
+                and cu.identity_id like CONCAT('%',#{identityId},'%')
+            </if>
+            <if test="realName != null">
+                and  cu.real_name like CONCAT('%',#{realName},'%')
+            </if>
+            <if test="phone != null">
+                and cu.phone like CONCAT('%',#{phone},'%')
+            </if>
+
+    </select>
 </mapper>

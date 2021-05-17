@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -511,6 +512,18 @@ class CovidApplicationTests {
         for(int i = 0; i < items.size() ; i ++){
             System.out.println(items.getJSONObject(i));
         }
+    }
+
+    @Test
+    void Test5() throws ParseException {
+        String arriveTime = "2021-05-17";
+        Date date = DateUtil.StringToDate(arriveTime);
+        Calendar ca = Calendar.getInstance();
+        Date d = ca.getTime();
+        String s = DateUtil.dateToString1(d);
+        Calendar caNow = Calendar.getInstance();
+        String nowString = DateUtil.dateToString1(caNow.getTime());
+        System.out.println(nowString);
     }
 
 }

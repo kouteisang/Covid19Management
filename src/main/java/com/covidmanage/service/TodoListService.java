@@ -43,4 +43,12 @@ public class TodoListService {
         }
         todoListMapperExt.editTodoListStatus(identityId, id, flag);
     }
+
+    public void editInfo(String identityId, String title, Integer id) {
+        todoListMapperExt.editInfo(identityId, title, id);
+    }
+
+    public void deleteInfo(Integer id) {
+        todoListMapperExt.deleteInfo(id);
+    }
 }

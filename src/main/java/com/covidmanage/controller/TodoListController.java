@@ -4,6 +4,7 @@ import com.covidmanage.dto.TodoListDTO;
 import com.covidmanage.service.TodoListService;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,20 @@ public class TodoListController {
     public ResponseTemplate editTodoListStatus(@RequestParam(value = "identityId") String identityId,
                                                @RequestParam(value = "id") Integer id){
         todoListService.editTodoListStatus(identityId, id);
+        return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+    }
+
+    @PostMapping("/editInfo")
+    public ResponseTemplate editInfo(@RequestParam(value = "identityId") String identityId,
+                                     @RequestParam(value = "title") String title,
+                                     @RequestParam(value = "id") Integer id){
+        todoListService.editInfo(identityId, title, id);
+        return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
+    }
+
+    @PostMapping("/deleteInfo")
+    public ResponseTemplate deleteInfo(@RequestParam(value = "id") Integer id){
+        todoListService.deleteInfo(id);
         return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());
     }
 }

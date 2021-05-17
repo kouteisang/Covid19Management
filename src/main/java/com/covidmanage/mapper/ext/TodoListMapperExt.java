@@ -20,4 +20,7 @@ public interface TodoListMapperExt extends TodoListMapper {
 
     void editTodoListStatus(@Param("identityId") String identityId, @Param("id") Integer id, @Param("flag") int flag);
 
+    void editInfo(@Param("identityId") String identityId, @Param("title") String title, @Param("id") Integer id);
+
+    void deleteInfo(@Param("id") Integer id);
 }

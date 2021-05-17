@@ -36,4 +36,14 @@
         where id = #{id} and identity_id = #{identityId}
     </update>
 
+    <update id="editInfo">
+        update todo_list
+        set todo_thing = #{title}
+        where identity_id = #{identityId} and id = #{id}
+    </update>
+
+    <delete id="deleteInfo">
+        delete from todo_list where id = #{id}
+    </delete>
+
 </mapper>
