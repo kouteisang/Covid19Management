@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://192.168.0.9:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://10.7.64.136:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/manager")
 public class LoginController {
@@ -33,6 +33,7 @@ public class LoginController {
     public ResponseTemplate login(@RequestParam(value = "identityId") String identityId,
                                   @RequestParam(value = "password") String password,
                                   HttpServletRequest httpServletRequest){
+        log.info("this is test.");
         password = EncryptUtil.Base64Encode(password);
         CommunityManager communityManager = loginService.findUserByInfo(identityId, password);
         Map<Object, Object> map = new HashMap<>();

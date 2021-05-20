@@ -9,6 +9,7 @@ import com.covidmanage.mapper.ext.CommunityUserMapperExt;
 import com.covidmanage.mapper.ext.VaccineLocationMapperExt;
 import com.covidmanage.pojo.CommunityManager;
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.pojo.TravelInfo;
 import com.covidmanage.pojo.VaccineReservation;
 import com.covidmanage.service.*;
 import com.covidmanage.utils.*;
@@ -40,6 +41,8 @@ import java.util.regex.Pattern;
 @SpringBootTest
 class CovidApplicationTests {
 
+    @Autowired
+    private TravelInfoService travelInfoService;
     @Autowired
     private LoginService loginService;
     @Autowired
@@ -524,6 +527,47 @@ class CovidApplicationTests {
         Calendar caNow = Calendar.getInstance();
         String nowString = DateUtil.dateToString1(caNow.getTime());
         System.out.println(nowString);
+    }
+
+    @Test
+    void Test6(){
+        List<TravelInfoDTO> travelInfoDTOS = new ArrayList<>();
+        List<TravelInfo> allInfos = travelInfoService.getAll();
+        String url1 = "https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=provinceCompare";
+        String s = HttpUtil.doGet(url1, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        for (TravelInfo info : allInfos){
+            String province = info.getProvince();
+            Integer zero = jsonObject.getJSONObject("data")
+                    .getJSONObject("provinceCompare")
+                    .getJSONObject(province)
+                    .getInteger("zero");
+            Integer confirmAdd = jsonObject.getJSONObject("data")
+                    .getJSONObject("provinceCompare")
+                    .getJSONObject(province)
+                    .getInteger("confirmAdd");
+
+            int score = zero * 4 + 3 * info.getA5Num() + 3 * info.getTravelScore();
+            if(confirmAdd <= 5 && confirmAdd >= 0){
+                score += (5-confirmAdd)*20;
+            }
+            TravelInfoDTO build = TravelInfoDTO.builder()
+                    .score(score)
+                    .info(info.getInfo())
+                    .picUrl(info.getPicurl())
+                    .province(province)
+                    .build();
+            travelInfoDTOS.add(build);
+        }
+        Collections.sort(travelInfoDTOS, new Comparator<TravelInfoDTO>() {
+            @Override
+            public int compare(TravelInfoDTO o1, TravelInfoDTO o2) {
+                return o2.getScore() - o1.getScore();
+            }
+        });
+        for(TravelInfoDTO t : travelInfoDTOS){
+            System.out.println(t.getProvince() + " " + t.getScore());
+        }
     }
 
 }

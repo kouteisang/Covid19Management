@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@CrossOrigin(origins = "http://192.168.0.9:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://10.7.64.136:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/covidApi")
 public class CovidDataApiController {
@@ -306,18 +306,13 @@ public class CovidDataApiController {
                 //得到json中results数组数据
                 JSONArray results = jsonObject.getJSONArray("data");
 
-                String url1 = "https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=provinceCompare";
-                String s = HttpUtil.doGet(url1, "UTF-8");
-                JSONObject jsonObject1 = JSONObject.parseObject(s);
-                Integer currentConfirmedCountInteger = jsonObject1.getJSONObject("data").getJSONObject("provinceCompare").getJSONObject(province.getProvince()).getInteger("nowConfirm");
-                if(currentConfirmedCountInteger < 0) currentConfirmedCountInteger = 0;
 
                 JSONObject provinceResult = results.getJSONObject(results.size()-1);
                     String provinceName = provinceResult.getString("province"); //省份名称
                     Integer confirmedCount = Integer.parseInt(provinceResult.getString("confirm")); //累计确诊人数
-                    Integer currentConfirmedCount = currentConfirmedCountInteger; //当前确诊人数
                     Integer curedCount = Integer.parseInt(provinceResult.getString("heal")); //累计治愈人数
                     Integer deadCount = Integer.parseInt(provinceResult.getString("dead")); //累计死亡人数
+                    Integer currentConfirmedCount = confirmedCount - curedCount - deadCount; //当前确诊人数
                     listProviceCovidDataDTO.add(ProviceCovidDataDTO.builder()
                             .province(province.getProvince())
                             .picUrl(province.getPicurl())

@@ -14,7 +14,7 @@ import java.text.ParseException;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://192.168.0.9:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://10.7.64.136:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/arrival")
 public class ArrivalController {
