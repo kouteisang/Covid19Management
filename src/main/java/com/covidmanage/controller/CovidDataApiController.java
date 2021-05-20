@@ -444,7 +444,23 @@ public class CovidDataApiController {
         Map<Object, Object> map = new HashMap<>();
         map.put("list", list);
         return ResponseTemplate.success(map);
-
     }
 
+    @GetMapping("/getRiskSpecificInfo")
+    public ResponseTemplate getRiskSpecificInfo(@RequestParam(value = "city") String city) {
+        String s = HttpUtil.doGet("https://eyesight.news.qq.com/sars/riskarea", "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        List<String> listArea = new ArrayList<>();
+        JSONArray data = jsonObject.getJSONArray("data");
+        for(int i = 0; i < data.size(); i ++){
+            JSONObject riskArea = data.getJSONObject(i);
+            String area = riskArea.getString("area");
+            if(area.contains(city)){
+                listArea.add(area);
+            }
+        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("listArea", listArea);
+        return ResponseTemplate.success(map);
+    }
 }
