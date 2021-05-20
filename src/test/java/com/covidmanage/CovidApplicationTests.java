@@ -16,6 +16,8 @@ import com.covidmanage.utils.*;
 import jdk.nashorn.internal.scripts.JO;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,12 +25,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.w3c.dom.ls.LSOutput;
+import sun.misc.BASE64Encoder;
 
+import javax.servlet.http.HttpUtils;
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -570,4 +571,142 @@ class CovidApplicationTests {
         }
     }
 
+
+    @Test
+    void toBase64(){
+        InputStream inputStream = null;
+        byte[] data = null;
+        try {
+            inputStream = new FileInputStream("/Users/huangcheng/Documents/Covid19Management/src/main/resources/static/travelguangxi.png");
+            data = new byte[inputStream.available()];
+            inputStream.read(data);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 加密
+        BASE64Encoder encoder = new BASE64Encoder();
+        System.out.println(encoder.encode(data));
+       // return encoder.encode(data);
+    }
+
+
+    @Test
+    void Test() throws Exception {
+        String s = Sign.appSign(1255829723, "AKIDnPlrgEVVFiuqVsyyiCPKzNUKtBCvOZT6", "NTIq77qISMzLQEl1zh8H9k58uPdaGfnf", "", 2592000);
+        System.out.println(s);
+    }
+
+    @Test
+    void testShouxie(){
+        String host = "https://ocrapi-shouxie.taobao.com";
+        String path = "/ocrservice/shouxie";
+        String method = "POST";
+        String appcode = "3d62d8deea3e43a2af9bc646a83b0dfa";
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", "APPCODE " + appcode);
+        //根据API的要求，定义相对应的Content-Type
+        headers.put("Content-Type", "application/json; charset=UTF-8");
+        Map<String, String> querys = new HashMap<String, String>();
+        String img = PictureToBase64Util.picTobase64("/Users/huangcheng/Documents/Covid19Management/src/main/resources/static/zyl.jpg");
+        JSONObject params = new JSONObject();
+        params.put("img", img);
+        params.put("prob", false);
+        params.put("charInfo", false);
+        params.put("rotate", false);
+        params.put("table", false);
+        params.put("sortPage", false);
+        String bodys = params.toString();
+        try {
+            HttpResponse response = HttpUtilAli.doPost(host, path, method, headers, querys, bodys);
+//            System.out.println(response.toString());
+          //  获取response的body
+            String res = EntityUtils.toString(response.getEntity());
+            System.out.println(res);
+            JSONObject jsonObject = JSONObject.parseObject(res);
+            System.out.println(jsonObject);
+            String content = jsonObject.getString("content");
+            System.out.println(content);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void idCard(){
+        String host = "http://dm-51.data.aliyun.com";
+        String path = "/rest/160601/ocr/ocr_idcard.json";
+        String appcode = "3d62d8deea3e43a2af9bc646a83b0dfa";
+        String imgFile = "/Users/huangcheng/Documents/Covid19Management/src/main/resources/static/idcardzheng.jpg";
+        String method = "POST";
+
+        Map<String, String> headers = new HashMap<String, String>();
+        //最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+        headers.put("Authorization", "APPCODE " + appcode);
+        //根据API的要求，定义相对应的Content-Type
+        headers.put("Content-Type", "application/json; charset=UTF-8");
+
+        Map<String, String> querys = new HashMap<String, String>();
+        // 对图像进行base64编码
+        String imgBase64 = PictureToBase64Util.picTobase64(imgFile);
+
+        //configure配置
+        JSONObject configObj = new JSONObject();
+        configObj.put("side", "face");
+
+        String config_str = configObj.toString();
+
+        // 拼装请求body的json字符串
+        JSONObject requestObj = new JSONObject();
+        requestObj.put("image", imgBase64);
+        if(configObj.size() > 0) {
+            requestObj.put("configure", config_str);
+        }
+        String bodys = requestObj.toString();
+
+        try {
+            /**
+             * 重要提示如下:
+             * HttpUtils请从
+             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/src/main/java/com/aliyun/api/gateway/demo/util/HttpUtils.java
+             * 下载
+             *
+             * 相应的依赖请参照
+             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
+             */
+            HttpResponse response = HttpUtilAli.doPost(host, path, method, headers, querys, bodys);
+            int stat = response.getStatusLine().getStatusCode();
+            if(stat != 200){
+                System.out.println("Http code: " + stat);
+                System.out.println("http header error msg: "+ response.getFirstHeader("X-Ca-Error-Message"));
+                System.out.println("Http body error msg:" + EntityUtils.toString(response.getEntity()));
+                return;
+            }
+
+            String res = EntityUtils.toString(response.getEntity());
+            JSONObject res_obj = JSONObject.parseObject(res);
+
+            System.out.println(res_obj.toJSONString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void test111(){
+        String s = "http://localhost:8181/images/c5522feb-3642-4a4d-9b45-0842ae6df019.jpg";
+        String[] split = s.split("/");
+        for(int i = 0; i < split.length; i ++){
+            System.out.println(i+" "+split[i]);
+        }
+    }
+
+
+    @Test
+    void testJson(){
+        String s = "{\"orgWidth\":4624,\"prism_wnum\":1,\"width\":4624,\"orgHeight\":3472,\"prism_version\":\"1.0.9\",\"prism_wordsInfo\":[{\"pos\":[{\"x\":1898,\"y\":1609},{\"x\":2481,\"y\":1625},{\"x\":2474,\"y\":1879},{\"x\":1891,\"y\":1863}],\"x\":2059,\"width\":254,\"angle\":-88,\"y\":1452,\"word\":\"黄程\",\"direction\":0,\"height\":583}],\"content\":\"黄程 \",\"sid\":\"1a8abfce53f60055e0a191983a5c1f3547fec04f829304ca992d7525240f71a090de7b99\",\"height\":3472}\n";
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        System.out.println(jsonObject.getString("content"));
+    }
 }

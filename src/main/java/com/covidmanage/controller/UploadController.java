@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-@CrossOrigin(origins = "http://10.7.64.136:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://172.20.10.2:8080", allowCredentials = "true")
 @RestController
 @RequestMapping("/upload")
 public class UploadController {
@@ -33,6 +33,28 @@ public class UploadController {
         Map<Object, Object> map = new HashMap<>();
         String picUrl = "http://localhost:8181/images/" + fileName;
         map.put("picUrl", picUrl);
+        return ResponseTemplate.success(map);
+    }
+
+
+    @PostMapping("/uploadImgs")
+    public ResponseTemplate uploadImgs(@RequestParam(value = "file") MultipartFile[] file){
+        List<String> fileUrls = new ArrayList<>();
+        for(int i = 0; i < file.length; i ++){
+            String path = "/Users/huangcheng/Documents/Covid19Management/src/main/resources/static";
+            String suffix = file[i].getOriginalFilename().substring(file[i].getOriginalFilename().lastIndexOf("."));
+            String fileName = UUID.randomUUID().toString()+suffix;
+            File targetFile = new File(path, fileName);
+            try {
+                file[i].transferTo(targetFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String picUrl = "http://localhost:8181/images/" + fileName;
+            fileUrls.add(picUrl);
+        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("fileUrls", fileUrls);
         return ResponseTemplate.success(map);
     }
 }
