@@ -3,6 +3,7 @@ package com.covidmanage.controller;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.service.ArrivalService;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.utils.CommonUtil;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;

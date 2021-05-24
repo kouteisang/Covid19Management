@@ -12,6 +12,7 @@
         <result column="password" jdbcType="VARCHAR" property="password" />
         <result column="user_role" jdbcType="INTEGER" property="userRole" />
         <result column="picUrl" jdbcType="VARCHAR" property="picurl" />
+        <result column="certificate" jdbcType="INTEGER" property="certificate" />
     </resultMap>
 
     <select id="findUserByInfo" parameterType="java.lang.String" resultType="com.covidmanage.pojo.CommunityManager">
@@ -20,7 +21,31 @@
     </select>
 
     <insert id="register">
-        insert into community_manager(identity_id, username, password, picUrl)
-        values(#{identityId}, #{username}, #{password}, #{picUrl})
+        insert into community_manager(identity_id, username, password, picUrl, certificate, user_role)
+        values(#{identityId}, #{username}, #{password}, #{picUrl}, #{certificate}, #{userRole})
     </insert>
+
+    <select id="getAus" resultType="java.lang.Integer">
+        select count(1)
+        from community_manager
+        where certificate = 0
+    </select>
+
+    <select id="getNeedAusInfo" resultType="com.covidmanage.pojo.CommunityManager">
+        select *
+        from community_manager
+        where user_role = 1
+        <if test="identityId != null">
+            and identity_id like CONCAT('%',#{identityId},'%')
+        </if>
+        <if test="username != null">
+            and  username like CONCAT('%',#{username},'%')
+        </if>
+    </select>
+
+    <update id="pass">
+        update community_manager
+        set certificate = 1
+        where identity_id = #{identityId}
+    </update>
 </mapper>

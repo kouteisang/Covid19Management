@@ -47,6 +47,9 @@ public class TravelController {
             if(confirmAdd <= 5 && confirmAdd >= 0){
                 score += (5-confirmAdd)*20;
             }
+            if(confirmAdd > 5){
+                score -= (confirmAdd)*100;
+            }
             TravelInfoDTO build = TravelInfoDTO.builder()
                     .score(score)
                     .info(info.getInfo())

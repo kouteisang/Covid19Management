@@ -44,7 +44,14 @@ public class PicScanService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return content;
+        int len = content.length();
+        StringBuilder name = new StringBuilder();
+        for (int i = 0; i < len; i ++){
+            if(content.charAt(i) != ' '){
+                name.append(content.charAt(i));
+            }
+        }
+        return name.toString();
     }
 
     public Map<Object, Object> scanIdCardFace(String picUrl){
