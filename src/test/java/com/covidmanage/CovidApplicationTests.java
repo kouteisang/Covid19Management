@@ -722,4 +722,17 @@ class CovidApplicationTests {
         System.out.println(phoneNumber);
     }
 
+    @Test
+    void recommendation(){
+        String beginTime = LocalDateTime.now().plusDays(-6).toString().split("T")[0];
+        String endTime = LocalDateTime.now().toString().split("T")[0];
+        System.out.println(beginTime);
+        System.out.println(endTime);
+        List<String> supplyNeedDTOS = supplyService.recommendBuySupply("2021-05-23", "2021-05-29");
+        for(int i = 0; i < supplyNeedDTOS.size(); i ++){
+            System.out.println(supplyNeedDTOS.get(i));
+        }
+
+    }
+
 }

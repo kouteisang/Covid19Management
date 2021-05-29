@@ -16,6 +16,11 @@
         <result column="suggestion" jdbcType="VARCHAR" property="suggestion"/>
     </resultMap>
 
+    <resultMap id="supplyNeedDTO" type="com.covidmanage.dto.SupplyNeedDTO">
+        <result column="number" jdbcType="INTEGER" property="number" />
+        <result column="supply_content" jdbcType="VARCHAR" property="supplyContent" />
+    </resultMap>
+
     <select id="getAskForSupplyList" resultMap="resultMap">
         select cu.identity_id, cu.real_name, cu.phone, cu.community,
                sn.supply_type, sn.supply_content, sn.age, sn.is_emergency, sn.create_time, sn.suggestion
@@ -59,5 +64,13 @@
         select count(1)
         from supply_need
         where supply_type = #{sk} and create_time like CONCAT(#{day0},'%')
+    </select>
+
+    <select id="recommendBuySupply" resultMap="supplyNeedDTO">
+        select count(1) as number, supply_content
+        from supply_need
+        where create_time &gt; #{beginTime} and create_time &lt; #{endTime}
+        group by supply_content
+        order by count(1) desc
     </select>
 </mapper>

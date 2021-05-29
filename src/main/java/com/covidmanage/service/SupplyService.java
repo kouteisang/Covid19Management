@@ -1,6 +1,7 @@
 package com.covidmanage.service;
 
 import com.covidmanage.dto.AskSupplyNeed;
+import com.covidmanage.dto.SupplyNeedDTO;
 import com.covidmanage.enums.AgeEnum;
 import com.covidmanage.enums.IsEmergency;
 import com.covidmanage.mapper.ext.SupplyNeedMapperExt;
@@ -12,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -71,5 +70,37 @@ public class SupplyService {
     public Integer getSupplyKindCountByDay(String sk, String day0) {
         Integer supplyKindCountByDay = supplyNeedMapperExt.getSupplyKindCountByDay(sk, day0);
         return supplyKindCountByDay;
+    }
+
+    public List<String> recommendBuySupply(String beginTime, String endTime) {
+        List<SupplyNeedDTO> supplyNeedDTOS = supplyNeedMapperExt.recommendBuySupply(beginTime, endTime);
+        TreeSet<Integer> ts = new TreeSet<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2-o1;
+            }
+        });
+        for(SupplyNeedDTO supplyNeedDTO : supplyNeedDTOS){
+            ts.add(supplyNeedDTO.getNumber());
+        }
+        Iterator<Integer> iterator = ts.iterator();
+        List<Integer> nums = new ArrayList<>();
+        while (iterator.hasNext()){
+            int number = iterator.next();
+            if(nums.size() < 3){
+                nums.add(number);
+            }else if(nums.size() >= 3){
+                break;
+            }
+        }
+        List<String> resSupply = new ArrayList<>();
+        for(int i = 0; i < supplyNeedDTOS.size(); i ++){
+            if(supplyNeedDTOS.get(i).getNumber() == nums.get(0)
+                    || supplyNeedDTOS.get(i).getNumber() == nums.get(Math.min(1, nums.size()))
+                    || supplyNeedDTOS.get(i).getNumber() == nums.get(Math.min(2, nums.size()))){
+                resSupply.add(supplyNeedDTOS.get(i).getSupplyContent());
+            }
+        }
+        return resSupply;
     }
 }

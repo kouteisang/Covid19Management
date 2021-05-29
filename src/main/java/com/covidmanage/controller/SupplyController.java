@@ -1,5 +1,6 @@
 package com.covidmanage.controller;
 
+import com.covidmanage.dto.SupplyNeedDTO;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.pojo.VerifyUser;
 import com.covidmanage.service.CommonService;
@@ -131,4 +132,26 @@ public class SupplyController {
         map.put("days", days);
         return ResponseTemplate.success(map);
     }
+
+    /**
+     * 推荐购买物资
+     */
+    @GetMapping("/recommendBuySupply")
+    public ResponseTemplate recommendBuySupply(){
+        String beginTime = LocalDateTime.now().plusDays(-6).toString().split("T")[0];
+        String endTime = LocalDateTime.now().toString().split("T")[0];
+        List<String> supplyNeedDTOS = supplyService.recommendBuySupply(beginTime, endTime);
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < supplyNeedDTOS.size(); i ++){
+            if(i != supplyNeedDTOS.size()-1){
+                sb.append(supplyNeedDTOS.get(i)).append(",");
+            }else if(i == supplyNeedDTOS.size() - 1){
+                sb.append(supplyNeedDTOS.get(i));
+            }
+        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("sb", sb.toString());
+        return ResponseTemplate.success(map);
+    }
+
 }
