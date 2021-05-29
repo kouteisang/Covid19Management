@@ -1,7 +1,9 @@
 package com.covidmanage.controller;
 
 import com.covidmanage.pojo.NewsInfo;
+import com.covidmanage.pojo.VerifyUser;
 import com.covidmanage.service.NewsService;
+import com.covidmanage.service.VerifyService;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;
@@ -23,7 +25,8 @@ public class NewsController {
 
     @Autowired
     private NewsService newsService;
-
+    @Autowired
+    private VerifyService verifyService;
     /**
      * 添加公告信息
      * @param newsTitle
@@ -32,10 +35,15 @@ public class NewsController {
      */
     @PostMapping("/addNews")
     public ResponseTemplate addNews(@RequestParam(value = "newsTitle", required = true) String newsTitle,
-                                    @RequestParam(value = "newsContent", required = true) String newsContent){
+                                    @RequestParam(value = "newsContent", required = true) String newsContent,
+                                    @RequestParam(value = "operator") String opeartor){
         newsTitle = newsTitle.trim();
         newsContent = newsContent.trim();
-        if(newsTitle.equals("") || newsContent.equals("")) return ResponseTemplate.fail(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
+        VerifyUser userInfo = verifyService.getUserInfo(opeartor);
+        if(userInfo == null){
+            return ResponseTemplate.fail(ResponseCode.NO_VERIFY.val(), ResponseCode.NO_VERIFY.msg());
+        }
+        if(newsTitle.length() < 5 || newsTitle.equals("") || newsContent.equals("")) return ResponseTemplate.fail(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
         int i = newsService.addNews(newsTitle, newsContent);
         if(i > 0)
             return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.msg());

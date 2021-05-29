@@ -1,7 +1,10 @@
 package com.covidmanage.controller;
 
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.pojo.VerifyUser;
 import com.covidmanage.service.CommunityUserService;
+import com.covidmanage.service.VerifyService;
+import com.covidmanage.utils.CommonUtil;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +25,8 @@ public class CommunityUserController {
 
     @Autowired
     private CommunityUserService communityUserService;
-
+    @Autowired
+    private VerifyService verifyService;
 
     /**
      * 查找小区用户
@@ -62,8 +67,8 @@ public class CommunityUserController {
                                     @RequestParam(value = "district") String district,
                                     @RequestParam(value = "community") String community,
                                     @RequestParam(value = "emergencyName") String emergencyName,
-                                    @RequestParam(value = "emergencyPhone") String emergencyPhone
-                                    ){
+                                    @RequestParam(value = "emergencyPhone") String emergencyPhone,
+                                    @RequestParam(value = "operator") String operator){
         log.info("identityId = {}", identityId);
         log.info("realName = {}", realName);
         log.info("phone = {}", phone);
@@ -71,6 +76,14 @@ public class CommunityUserController {
         log.info("city = {}", city);
         log.info("district = {}", district);
         log.info("community = {}", community);
+        log.info("operator = {}", operator);
+        VerifyUser userInfo = verifyService.getUserInfo(operator);
+        if(userInfo == null){
+            return ResponseTemplate.fail(ResponseCode.NO_VERIFY.val(), ResponseCode.NO_VERIFY.msg());
+        }
+        if(!CommonUtil.isIDNumber(identityId) || !CommonUtil.isPhoneNumber(phone) || !CommonUtil.isPhoneNumber(emergencyPhone)){
+            return ResponseTemplate.fail(ResponseCode.ERROR.val(),ResponseCode.ERROR.msg());
+        }
         communityUserService.addUser(identityId, realName, phone, province, city, district, community, emergencyName, emergencyPhone);
         return ResponseTemplate.success(ResponseCode.SUCCESS.val());
     }

@@ -10,9 +10,11 @@ import com.covidmanage.enums.VaccineTypeEnum;
 import com.covidmanage.pojo.CommunityUser;
 import com.covidmanage.pojo.ReservationSpecific;
 import com.covidmanage.pojo.VaccineReservation;
+import com.covidmanage.pojo.VerifyUser;
 import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.service.ReservationSpecificService;
 import com.covidmanage.service.VaccineService;
+import com.covidmanage.service.VerifyService;
 import com.covidmanage.utils.DateUtil;
 import com.covidmanage.utils.HttpUtil;
 import com.covidmanage.utils.ResponseCode;
@@ -38,6 +40,8 @@ public class VacinneController {
     private CommunityUserService communityUserService;
     @Autowired
     private ReservationSpecificService reservationSpecificService;
+    @Autowired
+    private VerifyService verifyService;
 
     @GetMapping("/getChinaVacinneData")
     public ResponseTemplate getChinaVacinneData(){
@@ -99,7 +103,12 @@ public class VacinneController {
                                                @RequestParam(value = "hospitalLocation") String hospitalLocation,
                                                @RequestParam(value = "hospitalTel") String hospitalTel,
                                                @RequestParam(value = "type") String type,
-                                               @RequestParam(value = "picUrl") String picUrl){
+                                               @RequestParam(value = "picUrl") String picUrl,
+                                               @RequestParam(value = "operator") String operator){
+        VerifyUser userInfo = verifyService.getUserInfo(operator);
+        if(userInfo == null){
+            return ResponseTemplate.success(ResponseCode.NO_VERIFY.val(), ResponseCode.NO_VERIFY.msg());
+        }
         vaccineService.addVaccineLocation(hospitalName, hospitalLocation, hospitalTel, type, picUrl);
         return ResponseTemplate.success(ResponseCode.SUCCESS.msg(), ResponseCode.SUCCESS.val());
     }

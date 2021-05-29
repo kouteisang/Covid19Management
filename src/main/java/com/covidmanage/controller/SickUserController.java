@@ -3,8 +3,11 @@ package com.covidmanage.controller;
 
 import com.covidmanage.dto.SickUserInfo;
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.pojo.VerifyUser;
 import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.service.SickUserService;
+import com.covidmanage.service.VerifyService;
+import com.covidmanage.utils.CommonUtil;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;
@@ -27,7 +30,8 @@ public class SickUserController {
     private CommunityUserService communityUserService;
     @Autowired
     private SickUserService sickUserService;
-
+    @Autowired
+    private VerifyService verifyService;
 
     /**
      * 添加生病人员信息
@@ -44,7 +48,15 @@ public class SickUserController {
                                         @RequestParam(value = "whenSick") String whenSick,
                                         @RequestParam(value = "ifFavour") String ifFavour,
                                         @RequestParam(value = "bodyTemperature") Double bodyTemperature,
-                                        @RequestParam(value = "covidTest") String covidTest){
+                                        @RequestParam(value = "covidTest") String covidTest,
+                                        @RequestParam(value = "operator") String operator){
+        VerifyUser userInfo = verifyService.getUserInfo(operator);
+        if(userInfo == null){
+            return ResponseTemplate.fail(ResponseCode.NO_VERIFY.val(), ResponseCode.NO_VERIFY.msg());
+        }
+        if(!CommonUtil.isIDNumber(identityId)){
+            return ResponseTemplate.fail(ResponseCode.ERROR.val(),ResponseCode.ERROR.msg());
+        }
         log.info("whenSick = {}", whenSick);
         CommunityUser communityUser = communityUserService.findUserByIndentityId(identityId);
         if(communityUser == null) return ResponseTemplate.fail(ResponseCode.NO_THIS_PERSON.val(),ResponseCode.NO_THIS_PERSON.msg());

@@ -179,7 +179,19 @@ public class CovidDataApiController {
 
     @GetMapping("/getCovidDataByProvince")
     public ResponseTemplate getCovidDataByProvince(@RequestParam(value = "province") String province) throws UnsupportedEncodingException {
-        province+='省';
+        if(province.equals("上海") || province.equals("北京") || province.equals("重庆")){
+            province += '市';
+        }else if (province.equals("新疆")){
+            province = "新疆维吾尔自治区";
+        } else if(province.equals("广西")){
+            province = "广西壮族自治区";
+        }else if(province.equals("西藏")){
+            province = "西藏自治区";
+        }else if(province.equals("宁夏")){
+            province = "宁夏回族自治区";
+        }else {
+            province+='省';
+        }
         List<String> cityNames = new ArrayList<>();
         List<Integer> confirmedCountList = new ArrayList<>();
         List<Integer> curedCountList = new ArrayList<>();
@@ -202,7 +214,7 @@ public class CovidDataApiController {
         for(int i = 0; i < cities.size(); i ++){
             JSONObject cityData = cities.getJSONObject(i);
             String cityName = cityData.getString("cityName");
-            if(cityName == "待明确地区") continue;
+            if(cityName.equals("待明确地区")) continue;
             cityNames.add(cityName);
             Integer cityCurrentConfirmedCount = Integer.parseInt(cityData.getString("currentConfirmedCount"));
             Integer cityConfirmedCount = Integer.parseInt(cityData.getString("confirmedCount"));

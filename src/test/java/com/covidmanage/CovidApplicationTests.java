@@ -149,10 +149,10 @@ class CovidApplicationTests {
         }
     }
 
-    @Test
-    void addSickUser(){
-        sickUserController.addSickUser("2","感冒","2017-01-01","否",36.5, "是");
-    }
+//    @Test
+//    void addSickUser(){
+//        sickUserController.addSickUser("2","感冒","2017-01-01","否",36.5, "是");
+//    }
 
     @Test
     void getUserList(){
@@ -709,4 +709,17 @@ class CovidApplicationTests {
         JSONObject jsonObject = JSONObject.parseObject(s);
         System.out.println(jsonObject.getString("content"));
     }
+
+    @Test
+    void testIdCard(){
+        boolean idNumber = CommonUtil.isIDNumber("372929199801166315");
+        System.out.println(idNumber);
+    }
+
+    @Test
+    void isPhoneNumber(){
+        boolean phoneNumber = CommonUtil.isPhoneNumber("1785273980");
+        System.out.println(phoneNumber);
+    }
+
 }

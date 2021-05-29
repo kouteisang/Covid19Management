@@ -1,9 +1,12 @@
 package com.covidmanage.controller;
 
 import com.covidmanage.pojo.CommunityUser;
+import com.covidmanage.pojo.VerifyUser;
 import com.covidmanage.service.CommonService;
 import com.covidmanage.service.CommunityUserService;
 import com.covidmanage.service.SupplyService;
+import com.covidmanage.service.VerifyService;
+import com.covidmanage.utils.CommonUtil;
 import com.covidmanage.utils.ResponseCode;
 import com.covidmanage.utils.ResponseTemplate;
 import com.github.pagehelper.PageHelper;
@@ -29,6 +32,8 @@ public class SupplyController {
     public SupplyService supplyService;
     @Autowired
     public CommonService commonService;
+    @Autowired
+    public VerifyService verifyService;
     /**
      * 物资申请
      * @param identityId
@@ -45,7 +50,14 @@ public class SupplyController {
                                         @RequestParam(value = "supplyContent") String supplyContent,
                                         @RequestParam(value = "age") Integer age,
                                         @RequestParam(value = "isEmergency") Integer isEmergency,
-                                        @RequestParam(value = "suggestion", required = false) String suggestion){
+                                        @RequestParam(value = "suggestion",defaultValue = "暂无建议") String suggestion){
+        VerifyUser userInfo = verifyService.getUserInfo(identityId);
+        if(userInfo == null){
+            return ResponseTemplate.fail(ResponseCode.NO_VERIFY.val(), ResponseCode.NO_VERIFY.msg());
+        }
+        if(!CommonUtil.isIDNumber(identityId)){
+            return ResponseTemplate.fail(ResponseCode.ERROR.val(),ResponseCode.ERROR.msg());
+        }
         CommunityUser user = communityUserService.findUserByIndentityId(identityId);
         if(user == null)
             return ResponseTemplate.fail(ResponseCode.NO_THIS_PERSON.val(), ResponseCode.NO_THIS_PERSON.msg());

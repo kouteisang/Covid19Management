@@ -1,6 +1,7 @@
 package com.covidmanage.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class IpPositionUtil {
 
     public static String getIp(){
@@ -56,7 +58,9 @@ public class IpPositionUtil {
     }
 
     public static String getAddress(){
-        String ip = IpPositionUtil.getIp();
+        //String ip = IpPositionUtil.getIp();
+        String ip = "111.17.201.246";
+        log.info("ip = ", ip);
         String url = "https://restapi.amap.com/v3/ip?key=643d6b4d35d9b5e57cd7bea1f94f1533&type=4&ip="+ip;
         String address = HttpUtil.doGet(url, "UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(address);

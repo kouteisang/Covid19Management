@@ -17,6 +17,8 @@ public enum ResponseCode {
     NO_FIRST_RECORD("406","您还未进行第一针的注射，请先注射第一针！"),
     /**未注射第一针 */
     WRONG_VACCINE_TYPE("407","疫苗注射两针需要同样的品牌,您第一针注射的是"),
+    /**未注射第一针 */
+    NO_VERIFY("600","您无权限操作，请先进行实名认证！"),
 
     ;
 
