@@ -79,10 +79,15 @@ public class NewsController {
     @PostMapping("/updateNewsInfoById")
     public ResponseTemplate updateNewsInfoById(@RequestParam(value = "id") Integer id,
                                                @RequestParam(value = "newsTitle") String newsTitle,
-                                               @RequestParam(value = "newsContent") String newsContent){
+                                               @RequestParam(value = "newsContent") String newsContent,
+                                               @RequestParam(value = "operator") String operator){
         newsTitle = newsTitle.trim();
         newsContent = newsContent.trim();
-        if(newsTitle.equals("") || newsContent.equals("")) return ResponseTemplate.fail(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
+        VerifyUser userInfo = verifyService.getUserInfo(operator);
+        if(userInfo == null){
+            return ResponseTemplate.fail(ResponseCode.NO_VERIFY.val(), ResponseCode.NO_VERIFY.msg());
+        }
+        if(newsTitle.length() < 5 || newsTitle.equals("") || newsContent.equals("")) return ResponseTemplate.fail(ResponseCode.ERROR.val(), ResponseCode.ERROR.msg());
         newsService.updateNewsInfoById(id, newsTitle, newsContent);
         return ResponseTemplate.success(ResponseCode.SUCCESS.val(), ResponseCode.SUCCESS.val());
     }
